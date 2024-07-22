@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: SequenceData2
   m_EditorClassIdentifier: 
   segments:
-  - image: {fileID: 0}
-    text: 
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: Exhausted, SuSu walks out of the municipality building. In his right hand,
+      he clutches the invaluable government approval documents.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: Time to get a loan. SuSu's peers have warned him about the rather sharp
+      clerks that work there. The documents in his hand bolster him to do it anyways.
     transitionSpeedInSeconds: 0

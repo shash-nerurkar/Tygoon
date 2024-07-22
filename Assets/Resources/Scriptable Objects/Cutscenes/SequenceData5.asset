@@ -13,6 +13,21 @@ MonoBehaviour:
   m_Name: SequenceData5
   m_EditorClassIdentifier: 
   segments:
-  - image: {fileID: 0}
-    text: 
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: SuSu finally manages to manipulate the mob into submission. They disperse.
+      His ex-tenants are glaring at him angrily. He pays no heed.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: The men resume work. SuSu goes back home.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: A few months, and it is finally the day of the reveal!
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: The all-new Chindi Chowk! (*Imagine a cool skyscraper*). Large and in-charge.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: SuSu isn't going to stop here. With a map of the city in his hands, and
+      a rupee symbol in his eyes, he burns with ambition. The growing city of Doglapur
+      will never expect what is coming for it.
     transitionSpeedInSeconds: 0

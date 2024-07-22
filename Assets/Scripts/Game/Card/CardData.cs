@@ -5,6 +5,8 @@ public class CardData : ScriptableObject
 {
     #region Serialized Fields
     
+    [ SerializeField ] private string title;
+    
     [ SerializeField ] private int damage;
     
     [ SerializeField ] private int health;
@@ -15,6 +17,8 @@ public class CardData : ScriptableObject
 
     
     #region Public Fields
+    
+    public string Title => title;
     
     public int Damage => damage;
     

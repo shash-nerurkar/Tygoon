@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde81f05d68c28d4f875d469d7e8f425, type: 3}
+  m_Name: Govt office
+  m_EditorClassIdentifier: 
+  openingDialogues:
+  - speaker: 0
+    text: Ramu sir, Leela ma'am, I have an important matter to discuss
+  - speaker: 1
+    text: '*yawns*'
+  - speaker: 2
+    text: '*Scrolls phone*'
+  - speaker: 0
+    text: Sir, ma'am. Please. It's for the development of Doglapur.
+  - speaker: 1
+    text: '*ignores*'
+  - speaker: 2
+    text: '*ignores*'
+  - speaker: 0
+    text: '*Flashes money*'
+  - speaker: 1
+    text: Yes, what can I do for you ?
+  closingDialoguesOnWin:
+  - speaker: 0
+    text: '*Pays a big amount to get the approval*'
+  - speaker: 0
+    text: '*begrudingly* Thank you sir. Thank you ma''am.'
+  closingDialoguesOnLose: []

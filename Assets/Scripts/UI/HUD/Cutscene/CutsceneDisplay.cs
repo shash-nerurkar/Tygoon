@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ public class CutsceneDisplay : MonoBehaviour
     [ SerializeField ] private Image backgroundImage;
 
     [ SerializeField ] private TextMeshProUGUI narrationLabel;
+
+    [ SerializeField ] private ContentSizeFitter narrationTextFitter;
 
     private CutsceneSequenceData _currentSequenceData;
 
@@ -55,10 +58,14 @@ public class CutsceneDisplay : MonoBehaviour
         }
     }
 
-    public void ShowCurrentSegment ( ) 
+    private async void ShowCurrentSegment ( ) 
     {
         backgroundImage.sprite = _currentSequenceData.Segments [ _currentSegmentIndex ].Image;
         narrationLabel.text = _currentSequenceData.Segments [ _currentSegmentIndex ].Text;
+        
+        narrationTextFitter.enabled = false;
+        await Task.Delay ( 100 );
+        narrationTextFitter.enabled = true;
     }
 
     #endregion

@@ -1,8 +1,36 @@
 using System;
+using UnityEngine;
 
 public static class Constants 
 {
-    
+    #region In Game Progress
+
+    public static readonly int MaxProgress = 9;
+
+    #endregion
+
+
+    #region Card
+
+    public static readonly Color EnemyCardColor = new ( 1f, 0.8f, 0.8f );
+
+    public static readonly Color PlayerCardColor = new ( 0.8f, 1f, 0.8f );
+
+    public static readonly Vector3 HighLightPlacedCardScale = new ( 1.5f, 1.5f, 1.5f );
+
+    public static readonly Vector3 UnhighLightPlacedCardScale = new ( 1f, 1f, 1f );
+
+    public static readonly Vector3 PlacedCardScale = new ( 1f, 1f, 1f );
+
+    public static readonly Vector3 HeldCardScale = new ( 0.75f, 0.75f, 0.75f );
+
+    public static readonly Vector3 InDeckCardScale = new ( 1f, 1f, 1f );
+
+    public static readonly Vector3 CardHolderHidePosition = new ( 0f, -400f );
+
+    public static readonly Vector3 CardHolderShowPosition = new ( 0f, 0f );
+
+    #endregion
 }
 
 
@@ -19,9 +47,10 @@ public enum GameState
 public enum InGameState 
 {
     None,
-    ShowCards,
-    PlaceCard,
-    ShowDialogue
+    DialogueShowing,
+    EnemyPlayingCard,
+    WaitingForPlayerInput,
+    AllCardsAttacking
 }
 
 
@@ -34,7 +63,6 @@ public enum Cutscene
     GoingToConstructionSite,
     Outro
 }
-
 
 
 [ Serializable ]
@@ -59,5 +87,6 @@ public enum InGameCharacter
     TenantThree,
     RandomWoman,
     RandomMan,
-    RandomKid
+    RandomKids,
+    RandomMan2
 }

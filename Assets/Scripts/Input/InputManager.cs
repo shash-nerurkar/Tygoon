@@ -35,6 +35,18 @@ public class InputManager : MonoBehaviour
         return raycastResults.Any ( ) ? raycastResults.First ( ).gameObject.GetComponent<Card> ( ) : null;
     }
 
+    public static bool IsMouseOverCards ( ) 
+    {
+        PointerEventData pointerEventData = new ( EventSystem.current ) { position = Input.mousePosition };
+
+        List<RaycastResult> raycastResults = new ( );
+        EventSystem.current.RaycastAll ( pointerEventData, raycastResults );
+        
+        return raycastResults.Any ( ) 
+                ? raycastResults.Any ( result => result.gameObject.GetComponent<CardHolder> ( ) )
+                : false;
+    }
+
     #endregion    
 
     
@@ -74,8 +86,7 @@ public class InputManager : MonoBehaviour
                 break;
 
             case GameState.InGame:
-                _inputActionsDefault.Global.Disable ( );
-                _inputActionsDefault.InGame.Enable ( );
+                _inputActionsDefault.Global.Enable ( );
 
                 break;
         }
@@ -85,15 +96,28 @@ public class InputManager : MonoBehaviour
     {
         switch ( state ) 
         {
-            case InGameState.ShowCards:
+            case InGameState.None:
+                _inputActionsDefault.InGame.Disable ( );
 
                 break;
 
-            case InGameState.PlaceCard:
+            case InGameState.DialogueShowing:
+                _inputActionsDefault.InGame.Disable ( );
 
                 break;
 
-            case InGameState.ShowDialogue:
+            case InGameState.EnemyPlayingCard:
+                _inputActionsDefault.InGame.Disable ( );
+
+                break;
+
+            case InGameState.WaitingForPlayerInput:
+                _inputActionsDefault.InGame.Enable ( );
+
+                break;
+
+            case InGameState.AllCardsAttacking:
+                _inputActionsDefault.InGame.Disable ( );
 
                 break;
         }

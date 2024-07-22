@@ -9,6 +9,10 @@ public class GameManager : MonoBehaviour
 
     public static event Action<Level> OnLevelStartAction;
 
+    public static event Action<Level> StartBattleAction;
+
+    public static event Action ClearLevelDataAction;
+
     #endregion
 
 
@@ -28,6 +32,10 @@ public class GameManager : MonoBehaviour
         MainMenu.OnStartGameButtonPressedAction += StartNewGame;
 
         CutsceneDisplay.OnSequenceCompleteAction += OnCutsceneSequenceComplete;
+
+        DialogueBox.OnSequenceCompleteAction += OnDialogueSequenceComplete;
+
+        BoardManager.OnPlayerLoseAction += OnPlayerLose;
     }
 
     private void OnDestroy ( ) 
@@ -35,18 +43,15 @@ public class GameManager : MonoBehaviour
         MainMenu.OnStartGameButtonPressedAction -= StartNewGame;
 
         CutsceneDisplay.OnSequenceCompleteAction -= OnCutsceneSequenceComplete;
+
+        DialogueBox.OnSequenceCompleteAction -= OnDialogueSequenceComplete;
+
+        BoardManager.OnPlayerLoseAction -= OnPlayerLose;
     }
 
-    private void Start ( ) 
-    {
-        StartMainMenu ( );
-        // StartLevel ( Level.GovernmentOffice );
-    }
+    private void Start ( ) => StartMainMenu ( );
 
-    private void StartNewGame ( ) 
-    {
-        StartCutscene ( Cutscene.Pilot );
-    }
+    private void StartNewGame ( ) => StartCutscene ( Cutscene.Pilot );
 
     private void OnCutsceneSequenceComplete ( ) 
     {
@@ -78,30 +83,44 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnLevelComplete ( ) 
+    private void OnDialogueSequenceComplete ( bool isOpeningSequence ) 
     {
-        switch ( _currentLevel ) 
+        if ( isOpeningSequence ) 
+            StartBattleAction?.Invoke ( _currentLevel );
+        else 
         {
-            case Level.GovernmentOffice:
-                StartCutscene ( Cutscene.GoingToBank );
+            ClearLevelDataAction?.Invoke ( );
 
-                break;
+            switch ( _currentLevel ) 
+            {
+                case Level.GovernmentOffice:
+                    StartCutscene ( Cutscene.GoingToBank );
 
-            case Level.Bank:
-                StartCutscene ( Cutscene.GoingToBuilding );
+                    break;
 
-                break;
+                case Level.Bank:
+                    StartCutscene ( Cutscene.GoingToBuilding );
 
-            case Level.Building:
-                StartCutscene ( Cutscene.GoingToConstructionSite );
+                    break;
 
-                break;
+                case Level.Building:
+                    StartCutscene ( Cutscene.GoingToConstructionSite );
 
-            case Level.ConstructionSite:
-                StartCutscene ( Cutscene.Outro );
+                    break;
 
-                break;
+                case Level.ConstructionSite:
+                    StartCutscene ( Cutscene.Outro );
+
+                    break;
+            }
         }
+    }
+
+    private void OnPlayerLose ( Level level ) 
+    {
+        ClearLevelDataAction?.Invoke ( );
+
+        StartLevel ( level );
     }
 
     private void StartMainMenu ( ) 

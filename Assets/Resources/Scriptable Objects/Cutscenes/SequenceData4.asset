@@ -13,6 +13,23 @@ MonoBehaviour:
   m_Name: SequenceData4
   m_EditorClassIdentifier: 
   segments:
-  - image: {fileID: 0}
-    text: 
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: Messily, the tenants have been kicked. SuSu sighs, and goes home.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: The next day, SuSu begins preparations. Hiring construction, architects,
+      the whole shebang.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: A few days later, SuSu is lounging in his armchair with a cold one. His
+      phone starts ringing. It's the construction workers. They say they can't work
+      any longer.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: Shocked, SuSu asks them what they mean. There's an angry mob barring us
+      from entering the site, they say.
+    transitionSpeedInSeconds: 0
+  - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
+    text: SuSu is livid. He drives over to the construction site, only to see the
+      most unexpected bunch of people guarding its entrance.
     transitionSpeedInSeconds: 0

@@ -13,11 +13,7 @@ public class LevelProgressBar : MonoBehaviour
     
     [ SerializeField ] private Image sliderHandle;
     
-    [ SerializeField ] private ContentSizeFitter loseTextPanelFitter;
-    
     [ SerializeField ] private TextMeshProUGUI loseTextLabel;
-    
-    [ SerializeField ] private ContentSizeFitter winTextPanelFitter;
     
     [ SerializeField ] private TextMeshProUGUI winTextLabel;
 
@@ -32,7 +28,7 @@ public class LevelProgressBar : MonoBehaviour
 
     #region Methods
 
-    public async void InitProgressBar ( Level level ) 
+    public void InitProgressBar ( Level level ) 
     {
         slider.minValue = -Constants.MaxProgress;
         slider.maxValue = Constants.MaxProgress;
@@ -43,13 +39,6 @@ public class LevelProgressBar : MonoBehaviour
         
         loseTextLabel.text = LoseTexts [ level ];
         winTextLabel.text = WinTexts [ level ];
-        loseTextPanelFitter.enabled = false;
-        winTextPanelFitter.enabled = false;
-
-        await Task.Delay ( 100 );
-
-        loseTextPanelFitter.enabled = true;
-        winTextPanelFitter.enabled = true;
     }
 
     public void UpdateProgressBar ( int newValue ) 

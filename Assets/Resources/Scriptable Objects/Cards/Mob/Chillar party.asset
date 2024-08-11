@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Chillar party
   m_EditorClassIdentifier: 
   title: Chillar party
-  damage: 3
-  health: 3
+  damage: 2
+  health: 2
   description: The kids are here too, just because it's fun. And they'll make your
     life hard. With water balloons and t-shirt flags.

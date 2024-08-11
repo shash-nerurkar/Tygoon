@@ -1,8 +1,19 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
+    #region Actions
+
+    public static event Action OnRestartPressedAction;
+
+    #endregion
+
+    
     #region Serialized Fields
+
+    [ SerializeField ] private Transition transition;
 
     [ SerializeField ] private MainMenu mainMenu;
 
@@ -10,7 +21,9 @@ public class HUDManager : MonoBehaviour
 
     [ SerializeField ] private GameObject inGamePanel;
 
-    [ SerializeField ] private GameBoardDisplay gameBoardDisplay;
+    [ SerializeField ] private Button restartLevelButton;
+
+    [ SerializeField ] private BoardDisplay boardDisplay;
 
     [ SerializeField ] private DialogueBox dialogueBox;
 
@@ -18,7 +31,7 @@ public class HUDManager : MonoBehaviour
 
     [ SerializeField ] private LevelProgressBar levelProgressBar;
 
-    [ SerializeField ] private CharacterContainer characterContainer;
+    [ SerializeField ] private CharacterDisplay characterDisplay;
 
     #endregion
 
@@ -27,130 +40,154 @@ public class HUDManager : MonoBehaviour
 
     private void Awake ( ) 
     {
-        GameStateManager.OnGameStateChangeAction += OnGameStateChange;
-        GameStateManager.OnInGameStateChangeAction += OnInGameStateChange;
+        GameStateManager.OnGameStateChangeAction += OnGameStateChanged;
+        GameStateManager.OnInGameStateChangeAction += OnInGameStateChanged;
+
+        GameManager.ShowTransitionAction += transition.FadeIn;
 
         InputManager.OnGoNextPressedAction += GoNextPressed;
 
         CutsceneManager.StartCutsceneAction += cutsceneDisplay.StartNewCutscene;
 
-        Card.PlacementValidityCheckAction += gameBoardDisplay.CheckCardPlacementValidity;
-        BoardManager.InitializeBoardAction += gameBoardDisplay.OnLevelStart;
-        BoardManager.SpawnEnemyCardAction += gameBoardDisplay.SpawnEnemyCard;
-        BoardManager.MoveEnemyCardAction += gameBoardDisplay.MoveEnemyCard;
-        BoardManager.CardAttackAction += gameBoardDisplay.PlayCardAttackAnimation;
+        Card.PlacementValidityCheckAction += boardDisplay.CheckCardPlacementValidity;
+        BoardManager.InitializeBoardAction += boardDisplay.OnLevelStart;
+        BoardManager.ShowLevelObjectiveAction += boardDisplay.ShowLevelObjective;
+        BoardManager.CardSpawnAction += boardDisplay.CardSpawn;
+        BoardManager.CardMoveAction += boardDisplay.CardMove;
+        BoardManager.CardAttackAction += boardDisplay.CardAttack;
+        BoardManager.CardDespawnAction += boardDisplay.CardDespawn;
+        BoardManager.OnAllCardsAttackingCompleteAction += boardDisplay.OnAllCardsAttackingComplete;
+        InputManager.OnCardZoomStartedAction += boardDisplay.ZoomCard;
+        InputManager.OnCardZoomEndedAction += boardDisplay.StopZoomingCard;
         
         BoardManager.InitProgressBarAction += levelProgressBar.InitProgressBar;
         BoardManager.UpdateProgressBarAction += levelProgressBar.UpdateProgressBar;
         
-        GameBoardDisplay.PlaceCardAction += cardHolder.ClearCard;
+        InputManager.OnCardDragStartedAction += cardHolder.DragCard;
+        InputManager.OnCardDragEndedAction += cardHolder.StopDraggingCard;
         CardManager.AddPlayerCardsAction += cardHolder.CreatePlayerCards;
+        BoardDisplay.PlaceCardAction += cardHolder.ClearCard;
         CardManager.ClearAllCardsAction += cardHolder.ClearAllCards;
 
-        CharacterManager.GenerateLevelCharactersAction += characterContainer.AddCharacters;
-        CharacterManager.DestroyLevelCharactersAction += characterContainer.ClearAllCharacters;
+        CharacterManager.GenerateLevelCharactersAction += characterDisplay.AddCharacters;
+        CharacterManager.DestroyLevelCharactersAction += characterDisplay.ClearAllCharacters;
+        BoardDisplay.PlayCharacterDamageAnimationAction += characterDisplay.PlayCharacterDamageAnimation;
 
         DialogueManager.StartDialogueSequenceAction += dialogueBox.StartNewDialogueSequence;
     }
     
     private void OnDestroy ( ) 
     {
-        GameStateManager.OnGameStateChangeAction -= OnGameStateChange;
-        GameStateManager.OnInGameStateChangeAction -= OnInGameStateChange;
+        GameStateManager.OnGameStateChangeAction -= OnGameStateChanged;
+        GameStateManager.OnInGameStateChangeAction -= OnInGameStateChanged;
 
         InputManager.OnGoNextPressedAction -= GoNextPressed;
 
+        GameManager.ShowTransitionAction -= transition.FadeIn;
+
         CutsceneManager.StartCutsceneAction -= cutsceneDisplay.StartNewCutscene;
 
-        Card.PlacementValidityCheckAction -= gameBoardDisplay.CheckCardPlacementValidity;
-        BoardManager.InitializeBoardAction -= gameBoardDisplay.OnLevelStart;
-        BoardManager.SpawnEnemyCardAction -= gameBoardDisplay.SpawnEnemyCard;
-        BoardManager.MoveEnemyCardAction -= gameBoardDisplay.MoveEnemyCard;
-        BoardManager.CardAttackAction -= gameBoardDisplay.PlayCardAttackAnimation;
+        Card.PlacementValidityCheckAction -= boardDisplay.CheckCardPlacementValidity;
+        BoardManager.InitializeBoardAction -= boardDisplay.OnLevelStart;
+        BoardManager.ShowLevelObjectiveAction -= boardDisplay.ShowLevelObjective;
+        BoardManager.CardSpawnAction -= boardDisplay.CardSpawn;
+        BoardManager.CardMoveAction -= boardDisplay.CardMove;
+        BoardManager.CardAttackAction -= boardDisplay.CardAttack;
+        BoardManager.CardDespawnAction -= boardDisplay.CardDespawn;
+        BoardManager.OnAllCardsAttackingCompleteAction -= boardDisplay.OnAllCardsAttackingComplete;
+        InputManager.OnCardZoomStartedAction -= boardDisplay.ZoomCard;
+        InputManager.OnCardZoomEndedAction -= boardDisplay.StopZoomingCard;
         
         BoardManager.InitProgressBarAction -= levelProgressBar.InitProgressBar;
         BoardManager.UpdateProgressBarAction -= levelProgressBar.UpdateProgressBar;
         
-        GameBoardDisplay.PlaceCardAction -= cardHolder.ClearCard;
+        InputManager.OnCardDragStartedAction -= cardHolder.DragCard;
+        InputManager.OnCardDragEndedAction -= cardHolder.StopDraggingCard;
         CardManager.AddPlayerCardsAction -= cardHolder.CreatePlayerCards;
+        BoardDisplay.PlaceCardAction -= cardHolder.ClearCard;
         CardManager.ClearAllCardsAction -= cardHolder.ClearAllCards;
 
-        CharacterManager.GenerateLevelCharactersAction -= characterContainer.AddCharacters;
-        CharacterManager.DestroyLevelCharactersAction -= characterContainer.ClearAllCharacters;
+        CharacterManager.GenerateLevelCharactersAction -= characterDisplay.AddCharacters;
+        CharacterManager.DestroyLevelCharactersAction -= characterDisplay.ClearAllCharacters;
+        BoardDisplay.PlayCharacterDamageAnimationAction -= characterDisplay.PlayCharacterDamageAnimation;
 
         DialogueManager.StartDialogueSequenceAction -= dialogueBox.StartNewDialogueSequence;
     }
 
-    private void OnGameStateChange ( GameState state ) 
+    private void OnGameStateChanged ( GameState state ) 
     {
         switch ( state ) 
         {
             case GameState.MainMenu:
-                mainMenu.gameObject.SetActive( true );
+                mainMenu.gameObject.SetActive ( true );
 
-                cutsceneDisplay.gameObject.SetActive( false );
+                cutsceneDisplay.gameObject.SetActive ( false );
 
-                inGamePanel.SetActive ( false );
+                inGamePanel.SetActive  ( false );
 
                 break;
 
             case GameState.Cutscene:
-                mainMenu.gameObject.SetActive( false );
+                mainMenu.gameObject.SetActive ( false );
 
-                cutsceneDisplay.gameObject.SetActive( true );
+                cutsceneDisplay.gameObject.SetActive ( true );
 
-                inGamePanel.SetActive ( false );
+                inGamePanel.SetActive  ( false );
 
                 break;
 
             case GameState.InGame:
-                mainMenu.gameObject.SetActive( false );
+                mainMenu.gameObject.SetActive ( false );
 
-                cutsceneDisplay.gameObject.SetActive( false );
+                cutsceneDisplay.gameObject.SetActive ( false );
 
-                inGamePanel.SetActive ( true );
-
+                inGamePanel.SetActive  ( true );
+                
                 break;
         }
     }
 
-    private void OnInGameStateChange ( InGameState state ) 
+    private void OnInGameStateChanged ( InGameState state ) 
     {
+        boardDisplay.OnInGameStateChanged ( state );
+
         switch ( state ) 
         {
-            case InGameState.None:
-                levelProgressBar.gameObject.SetActive( false );
-                dialogueBox.gameObject.SetActive( false );
-                cardHolder.gameObject.SetActive( false );
-
-                break;
-
             case InGameState.DialogueShowing:
-                levelProgressBar.gameObject.SetActive( false );
-                dialogueBox.gameObject.SetActive( true );
-                cardHolder.gameObject.SetActive( false );
+                boardDisplay.ShowBattleElements ( false );
+                levelProgressBar.gameObject.SetActive ( false );
+                dialogueBox.gameObject.SetActive ( true );
+                cardHolder.gameObject.SetActive ( false );
+                restartLevelButton.gameObject.SetActive ( false );
 
                 break;
 
             case InGameState.EnemyPlayingCard:
-                levelProgressBar.gameObject.SetActive( true );
-                dialogueBox.gameObject.SetActive( false );
-                cardHolder.gameObject.SetActive( false );
+                boardDisplay.ShowBattleElements ( true );
+                levelProgressBar.gameObject.SetActive ( true );
+                dialogueBox.gameObject.SetActive ( false );
+                cardHolder.gameObject.SetActive ( false );
+                restartLevelButton.gameObject.SetActive ( false ); // true );
 
                 break;
 
             case InGameState.WaitingForPlayerInput:
-                levelProgressBar.gameObject.SetActive( true );
-                dialogueBox.gameObject.SetActive( false );
-                cardHolder.gameObject.SetActive( true );
+                boardDisplay.ShowBattleElements ( true );
+                levelProgressBar.gameObject.SetActive ( true );
+                dialogueBox.gameObject.SetActive ( false );
+                cardHolder.gameObject.SetActive ( true );
+                restartLevelButton.gameObject.SetActive ( false ); // true );
+
                 cardHolder.SetCards ( );
 
                 break;
 
             case InGameState.AllCardsAttacking:
-                levelProgressBar.gameObject.SetActive( true );
-                dialogueBox.gameObject.SetActive( false );
-                cardHolder.gameObject.SetActive( false );
+                boardDisplay.ShowBattleElements ( true );
+                levelProgressBar.gameObject.SetActive ( true );
+                dialogueBox.gameObject.SetActive ( false );
+                cardHolder.gameObject.SetActive ( false );
+                restartLevelButton.gameObject.SetActive ( false ); // true );
 
                 break;
         }
@@ -161,16 +198,22 @@ public class HUDManager : MonoBehaviour
         switch ( GameStateManager.CurrentGameState ) 
         {
             case GameState.Cutscene:
+                SoundManager.Instance.Play ( SoundType.OnCutscenePopped );
+
                 cutsceneDisplay.ShowNextSegment ( );
 
                 break;
 
             case GameState.InGame:
+                SoundManager.Instance.Play ( SoundType.OnDialoguePopped );
+
                 dialogueBox.ShowNextDialogue ( );
 
                 break;
         }
     }
+
+    public void OnRestartPressed ( ) => OnRestartPressedAction?.Invoke ( );
 
     #endregion
 }

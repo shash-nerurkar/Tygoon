@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Legal trouble
   damage: 3
-  health: 3
+  health: 2
   description: "They know you\u2019re trying to bypass some laws. They won\u2019t
     let you do it... for free."

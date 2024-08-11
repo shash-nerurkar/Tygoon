@@ -8,43 +8,40 @@ public class EnemyBachelors : IEnemy
 
     private List<CardData> _cardDatas;
 
-    private List<int> _placeableRows;
-
     #endregion
 
 
     #region Methods
 
-    public void UpdateData ( bool isInitial, CardData[] cardDatas, List<int> placeableRows ) 
-    {
-        if ( isInitial ) 
-        {
-            _cardDatas = cardDatas.ToList ( );
-        }
-        else 
-        {
-            if ( !_cardDatas.Any ( ) ) 
-                _cardDatas = cardDatas.ToList ( );
-        }
+    public void Init ( CardData [ ] cardDatas ) => _cardDatas = cardDatas.ToList ( );
 
-        _placeableRows = placeableRows;
-    }
-
-    public void PlayCard ( out CardData cardData, out int rowNumber ) 
+    public void PlayCard ( Card [ ] playerPlacedCards, Card [ ] placedCards, Card [ ] attackingCards, out CardData cardData, out int rowNumber ) 
     {
-        if ( _placeableRows == null ) 
+        var emptyPlacedRows = IEnemy.GetEmptyRows ( placedCards ).OrderBy ( x => Random.value ).ToList ( );
+
+        if ( !emptyPlacedRows.Any ( ) || !_cardDatas.Any ( ) )
         {
             cardData = null;
             rowNumber = -1;
+            return;
         }
-        else 
-        {
-            rowNumber = _placeableRows [ Random.Range ( 0, _placeableRows.Count ) ];
+
+        var emptyRowsToWeight = new Dictionary<int, int> ( );
+        foreach ( int row in emptyPlacedRows ) 
+            if ( playerPlacedCards [ row ] == null && attackingCards [ row ] == null ) 
+                emptyRowsToWeight.Add ( row, 7 );
+            else if ( playerPlacedCards [ row ] != null && attackingCards [ row ] == null ) 
+                emptyRowsToWeight.Add ( row, 5 );
+            else if ( playerPlacedCards [ row ] != null && attackingCards [ row ] != null ) 
+                emptyRowsToWeight.Add ( row, 2 );
+            else if ( playerPlacedCards [ row ] == null && attackingCards [ row ] != null ) 
+                emptyRowsToWeight.Add ( row, 1 );
+        
+        rowNumber = IEnemy.GetRandomRow ( emptyRowsToWeight );
             
-            var cardIndex = Random.Range ( 0, _cardDatas.Count );
-            cardData = _cardDatas [ cardIndex ];
-            _cardDatas.RemoveAt ( cardIndex );
-        }
+        var cardIndex = Random.Range ( 0, _cardDatas.Count );
+        cardData = _cardDatas [ cardIndex ];
+        _cardDatas.RemoveAt ( cardIndex );
     }
 
     #endregion

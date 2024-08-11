@@ -12,9 +12,19 @@ public class MainMenu : MonoBehaviour
 
     #region Methods
 
-    public void StartGameButtonPressed ( ) => OnStartGameButtonPressedAction?.Invoke ( );
+    public void StartGameButtonPressed ( ) 
+    {
+        SoundManager.Instance.Play ( SoundType.OnUIClicked );
+        
+        OnStartGameButtonPressedAction?.Invoke ( );
+    }
 
-    public void ExitGameButtonPressed ( ) => Application.Quit ( );
+    public void ExitGameButtonPressed ( ) 
+    {
+        SoundManager.Instance.Play ( SoundType.OnUIClicked );
+        
+        Application.Quit ( );
+    }
 
     #endregion
 }

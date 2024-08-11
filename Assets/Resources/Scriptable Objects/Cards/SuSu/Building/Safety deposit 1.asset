@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Safety deposit
   damage: 3
-  health: 3
-  description: You refuse to return the safety deposit. They don't call you the deposit
-    defunding despot for nothing.
+  health: 1
+  description: You refuse to return the safety deposit. They don't call you the Deposit
+    Defunding Despot for nothing.

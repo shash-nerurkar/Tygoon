@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openingDialogues:
   - speaker: 0
-    text: Bhund saab, how are you ? I am here to get a loan
+    text: Bhund saab, how are you? I am here to get a loan!
   - speaker: 3
-    text: '*sniffs* Where did this stench come from ?'
+    text: '*sniffs* Where did this stench come from?'
   - speaker: 0
-    text: '*snarls at the peon* Stop farting moron. Go get tea for us.'
+    text: '*snarls at the peon* Stop farting, moron. Go get tea for us.'
   - speaker: 3
-    text: '*scoffs* Come sit. What did you want ? *squints*'
+    text: Please do not order the help around. What do you want ?
   closingDialoguesOnWin:
   - speaker: 0
-    text: '*with a teary eye and diminished self respect, gets up from his chair*'
+    text: '*With a teary eye and diminished self respect, gets up from his chair*'
   - speaker: 3
-    text: '*smirks* Pleasure doing business with you Susu.'
+    text: '*smirks* Pleasure doing business with you, SuSu.'
   closingDialoguesOnLose: []

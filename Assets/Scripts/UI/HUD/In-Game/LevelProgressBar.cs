@@ -38,12 +38,16 @@ public class LevelProgressBar : MonoBehaviour
         slider.maxValue = Constants.MaxProgress;
 
         slider.value = 0;
+
+        sliderHandle.color = Color.Lerp ( Color.red, Color.green, Mathf.InverseLerp ( slider.minValue, slider.maxValue, 0 ) );
         
         loseTextLabel.text = LoseTexts [ level ];
         winTextLabel.text = WinTexts [ level ];
         loseTextPanelFitter.enabled = false;
         winTextPanelFitter.enabled = false;
+
         await Task.Delay ( 100 );
+
         loseTextPanelFitter.enabled = true;
         winTextPanelFitter.enabled = true;
     }

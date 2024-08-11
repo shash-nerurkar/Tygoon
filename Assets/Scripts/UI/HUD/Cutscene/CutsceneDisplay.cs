@@ -45,6 +45,9 @@ public class CutsceneDisplay : MonoBehaviour
 
     public void ShowNextSegment ( ) 
     {
+        if ( _currentSequenceData == null ) 
+            return;
+
         if ( _currentSegmentIndex < _currentSequenceData.Segments.Count - 1 ) 
         {
             ++_currentSegmentIndex;

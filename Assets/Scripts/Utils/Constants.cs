@@ -16,6 +16,8 @@ public static class Constants
 
     public static readonly Color PlayerCardColor = new ( 0.8f, 1f, 0.8f );
 
+    public static readonly Color NeutralCardColor = new ( 1f, 1f, 1f );
+
     public static readonly Vector3 HighLightPlacedCardScale = new ( 1.5f, 1.5f, 1.5f );
 
     public static readonly Vector3 UnhighLightPlacedCardScale = new ( 1f, 1f, 1f );
@@ -26,9 +28,36 @@ public static class Constants
 
     public static readonly Vector3 InDeckCardScale = new ( 1f, 1f, 1f );
 
-    public static readonly Vector3 CardHolderHidePosition = new ( 0f, -400f );
+    #endregion
 
-    public static readonly Vector3 CardHolderShowPosition = new ( 0f, 0f );
+
+    #region Card Holder
+
+    public static readonly Vector3 CardHolderHighlightedPosition = new ( 0f, 0f );
+
+    public static readonly Vector3 CardHolderUnHighlightedPosition = new ( 0f, -525f );
+
+    public static readonly Vector3 CardHolderHiddenPosition = new ( 0f, -600f );
+
+    #endregion
+
+
+    #region Transition
+
+    public static readonly Color TransitionFadeInColor = new ( 0f, 0f, 0f, 1f );
+
+    public static readonly Color TransitionFadeOutColor = new ( 0f, 0f, 0f, 0f );
+
+    #endregion
+
+    
+    #region Damage Indicators
+
+    public static readonly Color CardDamagedColor = new ( 1f, 0f, 0f );
+
+    public static readonly Color PlayerDamagedColor = new ( 1f, 0f, 0f );
+
+    public static readonly Color EnemyDamagedColor = new ( 0f, 1f, 0f );
 
     #endregion
 }
@@ -46,7 +75,6 @@ public enum GameState
 [ Serializable ]
 public enum InGameState 
 {
-    None,
     DialogueShowing,
     EnemyPlayingCard,
     WaitingForPlayerInput,
@@ -89,4 +117,23 @@ public enum InGameCharacter
     RandomMan,
     RandomKids,
     RandomMan2
+}
+
+
+[ Serializable ]
+public enum SoundType
+{
+    OnUIClicked,
+    OnDialoguePopped,
+    OnCutscenePopped,
+    OnCardPlaced,
+    OnCardAttack
+}
+
+
+[ Serializable ]
+public enum MusicType
+{
+    MainMenu,
+    Fight
 }

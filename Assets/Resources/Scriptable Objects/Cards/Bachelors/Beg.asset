@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Beg
   m_EditorClassIdentifier: 
   title: Beg
-  damage: 1
+  damage: 2
   health: 1
-  description: I mean, what else were tenants even going to do ?
+  description: What else were tenants even going to do?

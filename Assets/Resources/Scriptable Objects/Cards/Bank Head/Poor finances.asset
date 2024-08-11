@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8234745aea80f8b45822f975434ada2d, type: 3}
   m_Name: Poor finances
   m_EditorClassIdentifier: 
-  title: Poor finances
+  title: SuSu just sucks
   damage: 1
-  health: 6
-  description: Insufficient Credit Score. Inadequate Income. Drinking problem. SuSu,
-    Are you okay ?
+  health: 3
+  description: '"Insufficient credit score. Inadequate income. Drinking problem.
+    Honestly, SuSu, are you okay?"'

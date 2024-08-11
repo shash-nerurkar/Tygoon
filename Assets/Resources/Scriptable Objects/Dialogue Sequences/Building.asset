@@ -14,9 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openingDialogues:
   - speaker: 0
-    text: Hello dear tenants. I have good news and bad news. The good news is I will
-      be very rich.
+    text: Hello, dear tenants mine *snorts*. I have good news and bad news.
   - speaker: 0
-    text: The bad news is that you're about to be homeless. *smirks* Happy eviction.
-  closingDialoguesOnWin: []
+    text: The good news is I will be very rich. The bad news is that you're about
+      to be homeless. *smirks* Happy eviction.
+  closingDialoguesOnWin:
+  - speaker: 6
+    text: '*looks goofier than usual*'
+  - speaker: 5
+    text: This is unfaaaaaaair! *bawling*
+  - speaker: 4
+    text: '*growls* I will remember this.'
+  - speaker: 0
+    text: '*laughs, and rubs his government approval in their faces* I hope this...
+      smell.. leaves with you'
   closingDialoguesOnLose: []

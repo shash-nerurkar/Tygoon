@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -18,33 +19,51 @@ public class Card : MonoBehaviour
         
         #region Fields
 
-        [ SerializeField ] private Image image;
+
+        #region Serialized
 
         [ SerializeField ] private TextMeshProUGUI titleLabel;
 
-        [ SerializeField ] private TextMeshProUGUI damageLabel;
-
-        [ SerializeField ] private Image damageIcon;
+        [ SerializeField ] private TextMeshProUGUI descriptionLabel;
 
         [ SerializeField ] private TextMeshProUGUI healthLabel;
 
         [ SerializeField ] private Image healthIcon;
 
-        [ SerializeField ] private TextMeshProUGUI descriptionLabel;
+        [ SerializeField ] private TextMeshProUGUI damageLabel;
+
+        [ SerializeField ] private Image damageIcon;
+
+        [ Header ( "Self" ) ]
+        [ SerializeField ] private Image image;
+
+        [ SerializeField ] private RectTransform rectTransform;
+
+        [ SerializeField ] private LayoutElement layoutElement;
+
+        #endregion
+
+
+        #region Public
+        
+        public int Damage { get; private set; }
+
+        public int Health { get; private set; }
+
+        public bool IsDragging { get; private set; }
+
+        public bool IsPlaced { get; private set; }
+
+        public bool IsEnemyCard { get; private set; }
+
+        #endregion
+
 
         private Vector3 _basePosition;
 
         private IEnumerator _dragCoroutine;
 
-        private bool _isDragging;
-
-        private bool _isPlaced;
-
-        private bool _isEnemyCard;
-        
-        public int Damage { get; private set; }
-
-        public int Health { get; private set; }
+        private Transform _boardParent;
 
         #endregion
 
@@ -54,7 +73,7 @@ public class Card : MonoBehaviour
         
         #region Public
 
-        public void UpdateData ( CardData data, bool isEnemyCard ) 
+        public void Initialize ( CardData data, bool isEnemyCard ) 
         {
             titleLabel.text = data.Title;
             descriptionLabel.text = data.Description;
@@ -64,12 +83,25 @@ public class Card : MonoBehaviour
             Damage = data.Damage;
             Health = data.Health;
 
-            _isEnemyCard = isEnemyCard;
+            IsEnemyCard = isEnemyCard;
 
-            image.color = _isEnemyCard ? Constants.EnemyCardColor : Constants.PlayerCardColor;
+            if ( IsEnemyCard ) 
+            {
+                image.color = Constants.EnemyCardColor;
+
+                layoutElement.enabled = true;
+                layoutElement.ignoreLayout = true;
+            }
+            else 
+            {
+                image.color = Constants.PlayerCardColor;
+            }
         }
 
-        public void SetCurrentAsBasePosition ( ) => _basePosition = transform.localPosition;
+        public void SetCurrentAsBasePosition ( ) 
+        {
+            _basePosition = transform.localPosition;
+        }
 
         public void SetOpacity ( float a ) 
         {
@@ -85,8 +117,6 @@ public class Card : MonoBehaviour
 
             descriptionLabel.color = new Color ( descriptionLabel.color.r, descriptionLabel.color.g, descriptionLabel.color.b, ( int ) a );
         }
-
-        public void Place ( ) => _isPlaced = true;
 
         public void UpdateHealth ( int damageDealt ) 
         {
@@ -109,44 +139,102 @@ public class Card : MonoBehaviour
                 MoveBackToBasePosition ( );
         }
 
-        public void OnDragBegin ( ) 
+        public void BeginDrag ( ) 
         {
-            if ( _isPlaced ) 
-            {
-                transform.DOScale ( Constants.HighLightPlacedCardScale, 0.05f );
-                transform.DORotate ( new Vector3 ( 0, 0, 0 ), 0.05f );
-            }
-            else 
-            {
-                if ( _isDragging ) return;
-                _isDragging = true;
+            if ( IsDragging ) 
+                return;
+            IsDragging = true;
 
-                transform.DOScale ( Constants.HeldCardScale, 0.05f );
-                
-                _dragCoroutine = Drag ( );
-                StartCoroutine ( _dragCoroutine );
-            }
+            transform.DOScale ( Constants.HeldCardScale, 0.05f );
+            
+            _dragCoroutine = Drag ( );
+            StartCoroutine ( _dragCoroutine );
         }
 
-        public void OnDragEnd ( ) 
+        public void EndDrag ( ) 
         {
-            if ( _isPlaced ) 
+            if ( !IsDragging ) 
+                return;
+            IsDragging = false;
+            
+            if ( _dragCoroutine != null ) 
+                StopCoroutine ( _dragCoroutine );
+            
+            PlacementValidityCheckAction?.Invoke ( this );
+        }
+       
+        public async void Place ( RectTransform spaceRectTransform, bool isEnemyCard, bool isMoving ) 
+        {
+            transform.SetParent ( spaceRectTransform, true );
+
+            layoutElement.enabled = true;
+            layoutElement.ignoreLayout = true;
+
+            rectTransform.DOScale ( Constants.PlacedCardScale, 0.3f );
+
+            var cardNewWidth = spaceRectTransform.rect.height - 20;
+            rectTransform.DOSizeDelta ( new Vector3 ( cardNewWidth, cardNewWidth * ( rectTransform.sizeDelta.y / rectTransform.sizeDelta.x ) ), 0.3f );
+
+            rectTransform.DORotate ( new Vector3 ( 0, 0, isEnemyCard ? 90 : -90 ), 0.3f );
+
+
+            if ( !isMoving ) 
             {
-                transform.DOScale ( Constants.UnhighLightPlacedCardScale, 0.05f );
-                transform.DORotate ( new Vector3 ( 0, 0, _isEnemyCard ? 90 : -90 ), 0.05f );
+                SoundManager.Instance.Play ( SoundType.OnCardPlaced );
+                await Task.Delay ( 100 );
             }
-            else 
-            {
-                if ( !_isDragging ) return;
-                _isDragging = false;
-                
-                if ( _dragCoroutine != null ) 
-                    StopCoroutine ( _dragCoroutine );
-                
-                PlacementValidityCheckAction?.Invoke ( this );
-            }
+
+            rectTransform.anchoredPosition = Vector3.zero;
+            rectTransform.localPosition = Vector3.zero;
+        }
+
+        public void OnPlaced ( ) 
+        {
+            IsPlaced = true;
+        }
+ 
+        public void BeginZoom ( Transform newParent ) 
+        {
+            var originalPosition = transform.position;
+            _boardParent = transform.parent;
+            transform.SetParent ( newParent, true );
+            transform.position = originalPosition;
+            
+            transform.DOScale ( Constants.HighLightPlacedCardScale, 0.05f );
+            transform.DORotate ( new Vector3 ( 0, 0, 0 ), 0.05f );
+        }
+
+        public void EndZoom ( ) 
+        {
+            var originalPosition = transform.position;
+            transform.SetParent ( _boardParent, true );
+            _boardParent = null;
+            transform.position = originalPosition;
+
+            transform.DOScale ( Constants.UnhighLightPlacedCardScale, 0.05f );
+            transform.DORotate ( new Vector3 ( 0, 0, IsEnemyCard ? 90 : -90 ), 0.05f );
         }
         
+        public void Despawn ( ) 
+        {
+            var despawnAnimSpeed = 0.5f;
+
+            titleLabel.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+
+            damageLabel.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+            damageIcon.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+
+            healthLabel.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+            healthIcon.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+
+            descriptionLabel.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed );
+
+            image.DOColor ( new Color ( 0, 0, 0, 0 ), despawnAnimSpeed * 2f )
+                .OnComplete ( ( ) => { 
+                    Destroy ( gameObject );
+                } );
+        }
+
         #endregion
 
         

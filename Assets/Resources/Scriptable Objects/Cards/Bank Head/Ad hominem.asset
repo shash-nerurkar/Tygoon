@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8234745aea80f8b45822f975434ada2d, type: 3}
   m_Name: Ad hominem
   m_EditorClassIdentifier: 
-  title: Charitra-vaar
+  title: Ad hominem
   damage: 2
   health: 1
-  description: "You\u2019re a bit smelly and is that a ... hole in your shirt ? When
-    did you last get a haircut ? Do you even know English ?"
+  description: "\"You\u2019re a bit smelly. Is that a hole in your shirt? When did
+    you last get a haircut? Do you even know English?\""

@@ -11,6 +11,14 @@ public class InputManager : MonoBehaviour
 
     public static event Action OnGoNextPressedAction;
 
+    public static event Action<Card> OnCardDragStartedAction;
+
+    public static event Action OnCardDragEndedAction;
+
+    public static event Action<Card> OnCardZoomStartedAction;
+
+    public static event Action OnCardZoomEndedAction;
+
     #endregion
 
 
@@ -18,22 +26,10 @@ public class InputManager : MonoBehaviour
 
     private InputActionsDefault _inputActionsDefault;
 
-    private Card _currentlyHeldCard;
-
     #endregion
 
 
     #region Static
-
-    public static Card GetTopmostCard ( ) 
-    {
-        PointerEventData pointerEventData = new ( EventSystem.current ) { position = Input.mousePosition };
-
-        List<RaycastResult> raycastResults = new ( );
-        EventSystem.current.RaycastAll ( pointerEventData, raycastResults );
-        
-        return raycastResults.Any ( ) ? raycastResults.First ( ).gameObject.GetComponent<Card> ( ) : null;
-    }
 
     public static bool IsMouseOverCards ( ) 
     {
@@ -47,7 +43,7 @@ public class InputManager : MonoBehaviour
                 : false;
     }
 
-    #endregion    
+    #endregion
 
     
     #region Private Methods
@@ -96,11 +92,6 @@ public class InputManager : MonoBehaviour
     {
         switch ( state ) 
         {
-            case InGameState.None:
-                _inputActionsDefault.InGame.Disable ( );
-
-                break;
-
             case InGameState.DialogueShowing:
                 _inputActionsDefault.InGame.Disable ( );
 
@@ -130,17 +121,44 @@ public class InputManager : MonoBehaviour
 
     private void SetupInGameActions ( ) 
     {
-        _inputActionsDefault.InGame.DragCard.started += _ => {
-            _currentlyHeldCard = GetTopmostCard ( );
+        Card currentlyHeldCard = null;
 
-            _currentlyHeldCard?.OnDragBegin ( );
+        _inputActionsDefault.InGame.ClickCard.started += _ => {
+            currentlyHeldCard = GetTopmostCard ( );
+
+            if ( currentlyHeldCard != null ) 
+            {
+                if ( currentlyHeldCard.IsPlaced ) 
+                    OnCardZoomStartedAction?.Invoke ( currentlyHeldCard );
+                else 
+                    OnCardDragStartedAction?.Invoke ( currentlyHeldCard );
+            }
         };
 
-        _inputActionsDefault.InGame.DragCard.canceled += _ => {
-            _currentlyHeldCard?.OnDragEnd ( );
+        _inputActionsDefault.InGame.ClickCard.canceled += _ => {
+            if ( currentlyHeldCard != null ) 
+            {
+                if ( currentlyHeldCard.IsPlaced ) 
+                    OnCardZoomEndedAction?.Invoke ( );
+                else 
+                    OnCardDragEndedAction?.Invoke ( );
+            }
+
+            currentlyHeldCard = null;
+        };
+
+        return;
+
+        
+        static Card GetTopmostCard ( ) 
+        {
+            PointerEventData pointerEventData = new ( EventSystem.current ) { position = Input.mousePosition };
+
+            List<RaycastResult> raycastResults = new ( );
+            EventSystem.current.RaycastAll ( pointerEventData, raycastResults );
             
-            _currentlyHeldCard = null;
-        };
+            return raycastResults.Any ( ) ? raycastResults.First ( ).gameObject.GetComponent<Card> ( ) : null;
+        }
     }
 
     #endregion

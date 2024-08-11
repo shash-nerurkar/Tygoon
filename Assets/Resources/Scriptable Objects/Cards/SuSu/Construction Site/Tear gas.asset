@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8234745aea80f8b45822f975434ada2d, type: 3}
   m_Name: Tear gas
   m_EditorClassIdentifier: 
-  title: GAAAAAAAS
+  title: Tear gas
   damage: 2
   health: 2
   description: You have the govt, bank AND police support now. What are these peasants
-    going to do now ? Cry ?
+    going to do now? Cry?

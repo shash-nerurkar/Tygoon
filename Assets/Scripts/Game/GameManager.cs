@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     public static event Action ClearLevelDataAction;
 
+    public static event Action<float, float, Action> ShowTransitionAction;
+
     #endregion
 
 
@@ -49,10 +51,10 @@ public class GameManager : MonoBehaviour
         BoardManager.OnPlayerLoseAction -= OnPlayerLose;
     }
 
-    private void Start ( ) => StartMainMenu ( );
+    private void Start ( ) => StartMainMenu ( fadeInSpeedInSeconds: 0f, fadeOutSpeedInSeconds: 1.5f );
 
     private void StartNewGame ( ) => StartCutscene ( Cutscene.Pilot );
-
+    
     private void OnCutsceneSequenceComplete ( ) 
     {
         switch ( _currentCutscene ) 
@@ -78,7 +80,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case Cutscene.Outro:
-                StartMainMenu ( );
+                StartMainMenu ( fadeInSpeedInSeconds: 1f, fadeOutSpeedInSeconds: 1f );
                 break;
         }
     }
@@ -123,27 +125,33 @@ public class GameManager : MonoBehaviour
         StartLevel ( level );
     }
 
-    private void StartMainMenu ( ) 
+    private void StartMainMenu ( float fadeInSpeedInSeconds, float fadeOutSpeedInSeconds ) 
     {
-        GameStateManager.ChangeGameState ( GameState.MainMenu );
+        ShowTransitionAction?.Invoke ( fadeInSpeedInSeconds, fadeOutSpeedInSeconds, ( ) => {
+            GameStateManager.ChangeGameState ( GameState.MainMenu );
+        } );
     }
 
-    private void StartCutscene ( Cutscene cutscene ) 
+    private void StartCutscene ( Cutscene cutscene, float fadeInSpeedInSeconds = 1f, float fadeOutSpeedInSeconds = 1f ) 
     {
-        _currentCutscene = cutscene;
+        ShowTransitionAction?.Invoke ( fadeInSpeedInSeconds, fadeOutSpeedInSeconds, ( ) => { 
+            _currentCutscene = cutscene;
 
-        GameStateManager.ChangeGameState ( GameState.Cutscene );
+            GameStateManager.ChangeGameState ( GameState.Cutscene ); 
 
-        OnCutsceneStartAction?.Invoke ( cutscene );
+            OnCutsceneStartAction?.Invoke ( cutscene );
+        } );
     }
 
-    private void StartLevel ( Level level ) 
+    private void StartLevel ( Level level, float fadeInSpeedInSeconds = 1f, float fadeOutSpeedInSeconds = 1f ) 
     {
-        _currentLevel = level;
+        ShowTransitionAction?.Invoke ( fadeInSpeedInSeconds, fadeOutSpeedInSeconds, ( ) => { 
+            _currentLevel = level;
 
-        GameStateManager.ChangeGameState ( GameState.InGame );
+            GameStateManager.ChangeGameState ( GameState.InGame );
 
-        OnLevelStartAction?.Invoke ( level );
+            OnLevelStartAction?.Invoke ( level );
+        } );
     }
 
     #endregion

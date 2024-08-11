@@ -14,13 +14,17 @@ public class BoardManager : MonoBehaviour
 
     public static event Action<Level> GeneratePlayerInitialCardsAction;
 
-    public static event Action<CardData, int> SpawnEnemyCardAction;
+    public static event Action<Level> ShowLevelObjectiveAction;
 
-    public static event Action<Card, int, bool> CardAttackAction;
+    public static event Action<CardData, int, bool> CardSpawnAction;
 
-    public static event Action<Card, int> MoveEnemyCardAction;
+    public static event Action<Card, int, bool> CardMoveAction;
 
-    public static event Action<Card, int, bool, bool> RemoveCardAction;
+    public static event Action<Card, Card, int, bool> CardAttackAction;
+
+    public static event Action<Card> CardDespawnAction;
+
+    public static event Action OnAllCardsAttackingCompleteAction;
 
     public static event Action<Level> InitProgressBarAction;
 
@@ -38,22 +42,21 @@ public class BoardManager : MonoBehaviour
     [ SerializeField ] private SerializedDictionary<Level, CardData [ ]> levelInitialEnemyCards;
     private Dictionary<Level, CardData [ ]> LevelInitialEnemyCards => levelInitialEnemyCards.ToDictionary ( );
 
-    private ReadOnlyDictionary<Level, IEnemy> _levelEnemies = new ( 
-        dictionary: new Dictionary<Level, IEnemy> ( ) 
-        { 
-            { Level.GovernmentOffice, new EnemyGovtEmployee ( ) },
-            { Level.Bank, new EnemyBankHead ( ) },
-            { Level.Building, new EnemyBachelors ( ) },
-            { Level.ConstructionSite, new EnemyMob ( ) },
-        } 
-    );
+    private ReadOnlyDictionary<Level, IEnemy> _levelEnemies = new ( dictionary: new Dictionary<Level, IEnemy> ( ) { 
+        { Level.GovernmentOffice, new EnemyGovtEmployee ( ) },
+        { Level.Bank, new EnemyBankHead ( ) },
+        { Level.Building, new EnemyBachelors ( ) },
+        { Level.ConstructionSite, new EnemyMob ( ) },
+    } );
 
-    Level _currentLevel;
+    private Level _currentLevel;
 
-    int _currentProgress = 0;
+    private int _currentProgress = 0;
 
     private Card [ ] _playerPlacedCards;
+
     private Card [ ] _enemyPlacedCards;
+
     private Card [ ] _enemyAttackingCards;
 
     #endregion
@@ -67,7 +70,7 @@ public class BoardManager : MonoBehaviour
         GameManager.StartBattleAction += StartBattle;
         GameManager.ClearLevelDataAction += ClearData;
 
-        GameBoardDisplay.PlaceCardAction += OnPlacedCard;
+        BoardDisplay.PlaceCardAction += OnPlacedCard;
 
         Card.RemoveAction += RemoveCard;
         
@@ -78,11 +81,11 @@ public class BoardManager : MonoBehaviour
 
     private void OnDestroy ( ) 
     {
-        GameManager.OnLevelStartAction += OnLevelStart;
+        GameManager.OnLevelStartAction -= OnLevelStart;
         GameManager.StartBattleAction -= StartBattle;
         GameManager.ClearLevelDataAction -= ClearData;
 
-        GameBoardDisplay.PlaceCardAction -= OnPlacedCard;
+        BoardDisplay.PlaceCardAction -= OnPlacedCard;
 
         Card.RemoveAction -= RemoveCard;
     }
@@ -109,7 +112,7 @@ public class BoardManager : MonoBehaviour
         Array.Clear ( _enemyAttackingCards, 0, _enemyAttackingCards.Length );
     }
 
-    private void StartBattle ( Level level ) 
+    private async void StartBattle ( Level level ) 
     {
         _currentLevel = level;
 
@@ -117,45 +120,48 @@ public class BoardManager : MonoBehaviour
 
         GeneratePlayerInitialCardsAction?.Invoke ( _currentLevel );
 
-        _levelEnemies [ _currentLevel ].UpdateData ( isInitial: true, cardDatas: LevelInitialEnemyCards [ _currentLevel ], new List<int> ( ) { 0, 1, 2, 3 } );
+        ShowLevelObjectiveAction?.Invoke ( _currentLevel );
+
+        _levelEnemies [ _currentLevel ].Init ( cardDatas: LevelInitialEnemyCards [ _currentLevel ] );
+
+        await Task.Delay ( 3000 );
 
         SpawnEnemyCard ( );
     }
     
-    private void SpawnEnemyCard ( ) 
+    private async void SpawnEnemyCard ( ) 
     {
         GameStateManager.ChangeInGameState ( InGameState.EnemyPlayingCard );
 
-        var enemyPlaceableRows = new List<int> ( );
-        for ( var i = 0; i < 4; i++ ) 
-            if ( _enemyPlacedCards [ i ] == null ) 
-                enemyPlaceableRows.Add ( i );
-        _levelEnemies [ _currentLevel ].UpdateData ( isInitial: false, cardDatas: LevelInitialEnemyCards [ _currentLevel ], enemyPlaceableRows );
+        await Task.Delay ( 1000 );
 
-        _levelEnemies [ _currentLevel ].PlayCard ( out var enemyCardDataToPlay, out var rowNumber );
+        _levelEnemies [ _currentLevel ].PlayCard ( _playerPlacedCards, _enemyPlacedCards, _enemyAttackingCards, out var enemyCardDataToPlay, out var rowNumber );
+
+        await Task.Delay ( 1000 );
 
         if ( enemyCardDataToPlay != null ) 
-            SpawnEnemyCardAction?.Invoke ( enemyCardDataToPlay, rowNumber );
+            CardSpawnAction?.Invoke ( enemyCardDataToPlay, rowNumber, true );
         else 
             SetPlayerInputIfPossible ( );
     }
 
-    private void SetPlayerInputIfPossible ( ) 
+    private async void SetPlayerInputIfPossible ( ) 
     {
-        foreach ( var card in _playerPlacedCards ) 
-            if ( card == null ) 
-                if ( CardHolder.Cards.Any ( ) ) 
-                {
-                    GameStateManager.ChangeInGameState ( InGameState.WaitingForPlayerInput );
-                    return;
-                }
-        
-        PlayerCardsAttack ( );
+        bool areAnyPlayerCardsLeft = CardHolder.Cards.Any ( ) && _playerPlacedCards.Any ( card => card == null );
+
+        GameStateManager.ChangeInGameState ( InGameState.WaitingForPlayerInput );
+
+        if ( !areAnyPlayerCardsLeft ) 
+        {
+            await Task.Delay ( 1500 );
+
+            PlayerCardsAttack ( );
+        }
     }
 
     private async void OnPlacedCard ( Card card, int rowNumber, bool isEnemyCard ) 
     {
-        card.Place ( );
+        card.OnPlaced ( );
 
         if ( isEnemyCard ) 
         {
@@ -169,8 +175,6 @@ public class BoardManager : MonoBehaviour
         {
             _playerPlacedCards [ rowNumber ] = card;
 
-            await Task.Delay ( 1000 );
-
             PlayerCardsAttack ( );
         }
     }
@@ -179,7 +183,7 @@ public class BoardManager : MonoBehaviour
     {
         GameStateManager.ChangeInGameState ( InGameState.AllCardsAttacking );
         
-        for ( var i = 0; i < 4; i++ ) 
+        for ( var i = 0; i < _playerPlacedCards.Length; i++ ) 
         {
             if ( _playerPlacedCards [ i ] == null ) 
                 continue;
@@ -198,7 +202,7 @@ public class BoardManager : MonoBehaviour
 
     private async void EnemyCardsAttack ( ) 
     {
-        for ( var i = 0; i < 4; i++ ) 
+        for ( var i = 0; i < _enemyAttackingCards.Length; i++ ) 
         {
             if ( _enemyAttackingCards [ i ] != null ) 
             {
@@ -223,12 +227,14 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        OnAllCardsAttackingCompleteAction?.Invoke ( );
+
         SpawnEnemyCard ( );
     }
 
     private void EndGame ( ) 
     {
-        GameStateManager.ChangeInGameState ( InGameState.None );
+        OnAllCardsAttackingCompleteAction?.Invoke ( );
 
         if ( _currentProgress > 0 ) 
             OnPlayerWinAction?.Invoke ( _currentLevel );
@@ -246,7 +252,9 @@ public class BoardManager : MonoBehaviour
             if ( card.Damage == 0 ) 
                 return;
 
-            CardAttackAction?.Invoke ( card, rowNumber, isEnemyCard );
+            CardAttackAction?.Invoke ( card, _enemyAttackingCards [ rowNumber ], rowNumber, isEnemyCard );
+
+            await Task.Delay ( 1150 );
 
             if ( _enemyAttackingCards [ rowNumber ] != null ) 
                 _enemyAttackingCards [ rowNumber ].UpdateHealth ( card.Damage );
@@ -260,9 +268,11 @@ public class BoardManager : MonoBehaviour
             if ( isAttacking ) 
             {
                 if ( card.Damage == 0 ) 
-                    return; 
+                    return;
 
-                CardAttackAction?.Invoke ( card, rowNumber, isEnemyCard );
+                CardAttackAction?.Invoke ( card, _playerPlacedCards [ rowNumber ], rowNumber, isEnemyCard );
+
+                await Task.Delay ( 1150 );
                 
                 if ( _playerPlacedCards [ rowNumber ] != null ) 
                     _playerPlacedCards [ rowNumber ].UpdateHealth ( card.Damage );
@@ -277,9 +287,10 @@ public class BoardManager : MonoBehaviour
                 {
                     _enemyAttackingCards [ rowNumber ] = _enemyPlacedCards [ rowNumber ];
                     _enemyPlacedCards [ rowNumber ] = null;
-                    MoveEnemyCardAction?.Invoke ( card, rowNumber );
+
+                    CardMoveAction?.Invoke ( card, rowNumber, true );
                     
-                    await Task.Delay ( 1000 );
+                    await Task.Delay ( 500 );
                     
                     await PerformCardAction ( card, rowNumber, isEnemyCard, true );
                 }
@@ -293,25 +304,21 @@ public class BoardManager : MonoBehaviour
         {
             var cardIndex = Array.IndexOf ( _playerPlacedCards, card );
             _playerPlacedCards [ cardIndex ] = null;
-
-            RemoveCardAction?.Invoke ( card, cardIndex, false, true );
         }
         else if ( _enemyAttackingCards.Contains ( card ) ) 
         {
             var cardIndex = Array.IndexOf ( _enemyAttackingCards, card );
             _enemyAttackingCards [ cardIndex ] = null;
-
-            RemoveCardAction?.Invoke ( card, cardIndex, true, true );
         }
         else if ( _enemyPlacedCards.Contains ( card ) ) 
         {
             var cardIndex = Array.IndexOf ( _enemyPlacedCards, card );
             _enemyPlacedCards [ cardIndex ] = null;
-
-            RemoveCardAction?.Invoke ( card, cardIndex, true, false );
         }
+        else 
+            return;
 
-        Destroy ( card.gameObject );
+        CardDespawnAction?.Invoke ( card );
     }
 
     private void UpdateProgress ( int valueToAdd ) 

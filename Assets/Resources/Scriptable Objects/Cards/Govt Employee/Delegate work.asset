@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Delegate work
   damage: 1
-  health: 6
+  health: 4
   description: '"Sir, you''ll need to go to Dept. B. I can''t help you."'

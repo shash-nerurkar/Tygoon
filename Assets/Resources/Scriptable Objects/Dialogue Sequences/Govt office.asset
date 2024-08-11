@@ -14,24 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openingDialogues:
   - speaker: 0
-    text: Ramu sir, Leela ma'am, I have an important matter to discuss
+    text: Ramu sir, Leela ma'am, I have an important matter to discuss... *sleazy
+      grin*
   - speaker: 1
     text: '*yawns*'
   - speaker: 2
-    text: '*Scrolls phone*'
+    text: '*Busy scrolling her phone*'
   - speaker: 0
-    text: Sir, ma'am. Please. It's for the development of Doglapur.
+    text: Sir, ma'am. please. It is for the development of Doglapur.
   - speaker: 1
-    text: '*ignores*'
+    text: '*continues to ignore*'
   - speaker: 2
-    text: '*ignores*'
+    text: '*scroll scroll*'
   - speaker: 0
     text: '*Flashes money*'
   - speaker: 1
-    text: Yes, what can I do for you ?
+    text: Yes, what can I do for you?
   closingDialoguesOnWin:
-  - speaker: 0
-    text: '*Pays a big amount to get the approval*'
   - speaker: 0
     text: '*begrudingly* Thank you sir. Thank you ma''am.'
   closingDialoguesOnLose: []

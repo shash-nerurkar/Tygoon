@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8234745aea80f8b45822f975434ada2d, type: 3}
   m_Name: Uprising threat
   m_EditorClassIdentifier: 
-  title: Uprising threat
+  title: GenZ Prattle
   damage: 3
   health: 1
-  description: Chacha, chiiiiillll
+  description: Chacha, take a chill pilllll

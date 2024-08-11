@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: FURY
   damage: 3
-  health: 2
-  description: AAAAA AAAAA AAAAA AAAAA AAAAA AAAAAA AAAAAA AAAAA AAAAAA AAAA AAAAAAAAAA
-    AAAAAA AAAAAA AAAAAA AAAA AAA!!!! !!!!!!!
+  health: 1
+  description: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!

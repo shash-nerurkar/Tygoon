@@ -15,5 +15,5 @@ MonoBehaviour:
   title: Bad market
   damage: 1
   health: 2
-  description: Negative stonks. Not a good time for giving money to shaky person.
-    *snort*
+  description: '"This is not a good time for giving money to shaky person. Negative
+    stonks."'

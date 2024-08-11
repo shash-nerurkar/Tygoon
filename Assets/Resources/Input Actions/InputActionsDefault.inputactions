@@ -34,7 +34,7 @@
             "id": "ca76cf3d-c6b3-4c3f-9aee-7083f718fcee",
             "actions": [
                 {
-                    "name": "DragCard",
+                    "name": "ClickCard",
                     "type": "Button",
                     "id": "063ac403-86ab-425d-bbec-52c92bb5a89c",
                     "expectedControlType": "Button",
@@ -51,7 +51,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "DragCard",
+                    "action": "ClickCard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,10 @@ public class Character : MonoBehaviour
 
     [ SerializeField ] private Image portrait;
 
+    [ SerializeField ] private TextMeshProUGUI nameLabel;
+
+    public bool IsOnPlayerSide { get; private set; }
+
     #endregion
 
     
@@ -18,7 +23,12 @@ public class Character : MonoBehaviour
     {
         rectTransform.anchoredPosition = data.Position;
         rectTransform.sizeDelta = data.Size;
+
         portrait.sprite = data.Sprite;
+
+        nameLabel.text = data.Name;
+
+        IsOnPlayerSide = data.IsOnPlayerSide;
     }
 
     #endregion

@@ -15,5 +15,5 @@ MonoBehaviour:
   title: Police complaint
   damage: 1
   health: 1
-  description: "These boys think the police will help them. They\u2019ll call the
-    cops on you."
+  description: They think the police will help them. They threaten call the cops
+    on you.

@@ -58,7 +58,7 @@ namespace InputCustom
             ""id"": ""ca76cf3d-c6b3-4c3f-9aee-7083f718fcee"",
             ""actions"": [
                 {
-                    ""name"": ""DragCard"",
+                    ""name"": ""ClickCard"",
                     ""type"": ""Button"",
                     ""id"": ""063ac403-86ab-425d-bbec-52c92bb5a89c"",
                     ""expectedControlType"": ""Button"",
@@ -75,7 +75,7 @@ namespace InputCustom
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""DragCard"",
+                    ""action"": ""ClickCard"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -89,7 +89,7 @@ namespace InputCustom
             m_Global_GoNext = m_Global.FindAction("GoNext", throwIfNotFound: true);
             // InGame
             m_InGame = asset.FindActionMap("InGame", throwIfNotFound: true);
-            m_InGame_DragCard = m_InGame.FindAction("DragCard", throwIfNotFound: true);
+            m_InGame_ClickCard = m_InGame.FindAction("ClickCard", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -197,12 +197,12 @@ namespace InputCustom
         // InGame
         private readonly InputActionMap m_InGame;
         private List<IInGameActions> m_InGameActionsCallbackInterfaces = new List<IInGameActions>();
-        private readonly InputAction m_InGame_DragCard;
+        private readonly InputAction m_InGame_ClickCard;
         public struct InGameActions
         {
             private @InputActionsDefault m_Wrapper;
             public InGameActions(@InputActionsDefault wrapper) { m_Wrapper = wrapper; }
-            public InputAction @DragCard => m_Wrapper.m_InGame_DragCard;
+            public InputAction @ClickCard => m_Wrapper.m_InGame_ClickCard;
             public InputActionMap Get() { return m_Wrapper.m_InGame; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -212,16 +212,16 @@ namespace InputCustom
             {
                 if (instance == null || m_Wrapper.m_InGameActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_InGameActionsCallbackInterfaces.Add(instance);
-                @DragCard.started += instance.OnDragCard;
-                @DragCard.performed += instance.OnDragCard;
-                @DragCard.canceled += instance.OnDragCard;
+                @ClickCard.started += instance.OnClickCard;
+                @ClickCard.performed += instance.OnClickCard;
+                @ClickCard.canceled += instance.OnClickCard;
             }
 
             private void UnregisterCallbacks(IInGameActions instance)
             {
-                @DragCard.started -= instance.OnDragCard;
-                @DragCard.performed -= instance.OnDragCard;
-                @DragCard.canceled -= instance.OnDragCard;
+                @ClickCard.started -= instance.OnClickCard;
+                @ClickCard.performed -= instance.OnClickCard;
+                @ClickCard.canceled -= instance.OnClickCard;
             }
 
             public void RemoveCallbacks(IInGameActions instance)
@@ -245,7 +245,7 @@ namespace InputCustom
         }
         public interface IInGameActions
         {
-            void OnDragCard(InputAction.CallbackContext context);
+            void OnClickCard(InputAction.CallbackContext context);
         }
     }
 }

@@ -45,6 +45,8 @@ public class Card : MonoBehaviour
 
 
         #region Public
+
+        public CardData Data { get; private set; }
         
         public int Damage { get; private set; }
 
@@ -61,6 +63,10 @@ public class Card : MonoBehaviour
 
         private Vector3 _basePosition;
 
+        private Sequence _fadeOutTweenSequence;
+
+        private Sequence _fadeInTweenSequence;
+
         private IEnumerator _dragCoroutine;
 
         private Transform _boardParent;
@@ -75,6 +81,8 @@ public class Card : MonoBehaviour
 
         public void Initialize ( CardData data, bool isEnemyCard ) 
         {
+            Data = data;
+
             titleLabel.text = data.Title;
             descriptionLabel.text = data.Description;
             damageLabel.text = data.Damage.ToString ( );
@@ -103,19 +111,48 @@ public class Card : MonoBehaviour
             _basePosition = transform.localPosition;
         }
 
-        public void SetOpacity ( float a ) 
+        public void FadeToggle ( bool fadeOut ) 
         {
-            image.color = new Color ( image.color.r, image.color.g, image.color.b, a );
+            if ( fadeOut ) 
+                PlayFadeSequence ( ref _fadeOutTweenSequence, 0.25f, 0.2f );
+            else 
+                PlayFadeSequence ( ref _fadeInTweenSequence, 1.0f, 0.2f );
+            
+            return;
+            
 
-            titleLabel.color = new Color ( titleLabel.color.r, titleLabel.color.g, titleLabel.color.b, ( int ) a );
+            void PlayFadeSequence ( ref Sequence sequence, float alpha, float speed ) 
+            {
+                if ( sequence.IsActive ( ) ) 
+                    return;
+                
+                DestroySequenceIfActive ( _fadeInTweenSequence );
+                DestroySequenceIfActive ( _fadeOutTweenSequence );
 
-            damageLabel.color = new Color ( damageLabel.color.r, damageLabel.color.g, damageLabel.color.b, ( int ) a );
-            damageIcon.color = new Color ( damageIcon.color.r, damageIcon.color.g, damageIcon.color.b, a );
+                sequence = DOTween.Sequence ( );
+                
+                sequence.Join ( image.DOFade ( alpha, speed ) );
+                sequence.Join ( titleLabel.DOFade ( alpha, speed ) );
+                sequence.Join ( damageLabel.DOFade ( alpha, speed ) );
+                sequence.Join ( damageIcon.DOFade ( alpha, speed ) );
+                sequence.Join ( healthLabel.DOFade ( alpha, speed ) );
+                sequence.Join ( healthIcon.DOFade ( alpha, speed ) );
+                sequence.Join ( descriptionLabel.DOFade ( alpha, speed ) );
 
-            healthLabel.color = new Color ( healthLabel.color.r, healthLabel.color.g, healthLabel.color.b, ( int ) a );
-            healthIcon.color = new Color ( healthIcon.color.r, healthIcon.color.g, healthIcon.color.b, a );
+                sequence.Play ( );
 
-            descriptionLabel.color = new Color ( descriptionLabel.color.r, descriptionLabel.color.g, descriptionLabel.color.b, ( int ) a );
+                return;
+
+
+                void DestroySequenceIfActive ( Sequence sequence ) 
+                {
+                    if ( sequence.IsActive ( ) ) 
+                    {
+                        sequence.Kill ( );
+                        sequence = null;
+                    }
+                }
+            }
         }
 
         public void UpdateHealth ( int damageDealt ) 

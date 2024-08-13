@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -35,7 +34,7 @@ public class LevelProgressBar : MonoBehaviour
 
         slider.value = 0;
 
-        sliderHandle.color = Color.Lerp ( Color.red, Color.green, Mathf.InverseLerp ( slider.minValue, slider.maxValue, 0 ) );
+        sliderHandle.color = Constants.ProgressBarNeutralColor;
         
         loseTextLabel.text = LoseTexts [ level ];
         winTextLabel.text = WinTexts [ level ];
@@ -44,9 +43,32 @@ public class LevelProgressBar : MonoBehaviour
     public void UpdateProgressBar ( int newValue ) 
     {
         var startValue = slider.value;
-        DOTween.To ( ( ) => startValue, x => slider.value = x, Mathf.Clamp ( newValue, slider.minValue, slider.maxValue ), 0.5f );
+        DOTween.To ( ( ) => startValue, x => slider.value = x, Mathf.Clamp ( newValue, slider.minValue, slider.maxValue ), 0.5f )
+            .OnUpdate ( ( ) => {
+                float tValue;
+                Color startColor;
+                Color endColor;
 
-        sliderHandle.DOColor ( Color.Lerp ( Color.red, Color.green, Mathf.InverseLerp ( slider.minValue, slider.maxValue, newValue ) ), 0.5f );
+                if ( slider.value < 0 ) 
+                {
+                    tValue = EaseInQuad ( Mathf.InverseLerp ( slider.minValue, 0, newValue ) );
+                    startColor = Constants.ProgressBarNegativeColor;
+                    endColor = Constants.ProgressBarNeutralColor;
+                }
+                else 
+                {
+                    tValue = EaseInQuad ( Mathf.InverseLerp ( 0, slider.maxValue, newValue ) );
+                    startColor = Constants.ProgressBarNeutralColor;
+                    endColor = Constants.ProgressBarPositiveColor;
+                }
+
+                sliderHandle.color = Color.Lerp ( startColor, endColor, tValue );
+            } );
+        
+        return;
+
+
+        float EaseInQuad ( float t ) => t * t;
     }
     
     #endregion

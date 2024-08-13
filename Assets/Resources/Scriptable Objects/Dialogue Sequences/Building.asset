@@ -13,19 +13,27 @@ MonoBehaviour:
   m_Name: Building
   m_EditorClassIdentifier: 
   openingDialogues:
+  - speaker: 4
+    text: Hello. We are going out right now. Can we do whatever this is tomorrow?
+  - speaker: 5
+    text: Yes, we have plans! *worried*
+  - speaker: 6
+    text: '*looks goofily at SuSu*'
   - speaker: 0
-    text: Hello, dear tenants mine *snorts*. I have good news and bad news.
+    text: Hello, dear tenants mine. I have good news and bad news.
   - speaker: 0
     text: The good news is I will be very rich. The bad news is that you're about
       to be homeless. *smirks* Happy eviction.
   closingDialoguesOnWin:
   - speaker: 6
-    text: '*looks goofier than usual*'
+    text: '*looks even goofier than usual*'
   - speaker: 5
     text: This is unfaaaaaaair! *bawling*
   - speaker: 4
     text: '*growls* I will remember this.'
   - speaker: 0
-    text: '*laughs, and rubs his government approval in their faces* I hope this...
-      smell.. leaves with you'
+    text: '*laughing triumphantly* Please clear out peacefully after yourselves.
+      Good day to you, children.'
+  - speaker: 4
+    text: '*under his breath* Oh, we''ll be peaceful alright...'
   closingDialoguesOnLose: []

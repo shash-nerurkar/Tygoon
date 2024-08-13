@@ -19,7 +19,7 @@ public class CardHolder : MonoBehaviour
 
     [ SerializeField ] private HorizontalLayoutGroup layoutGroup;
 
-    public static List<Card> Cards = new ( );
+    private List<Card> _cards = new ( );
 
     private Card _currentlyDraggedCard;
 
@@ -28,6 +28,8 @@ public class CardHolder : MonoBehaviour
     private Tweener _unHighlightCardsTween;
 
     private Tweener _hideCardsTween;
+
+    private bool _shouldFadeOverlappingCard;
 
     #endregion
 
@@ -43,7 +45,7 @@ public class CardHolder : MonoBehaviour
             Card card = cardObject.GetComponent<Card> ( );
             card.Initialize ( cardDatas [ i ], isEnemyCard: false );
 
-            Cards.Add ( card );
+            _cards.Add ( card );
         }
         
         SetHolderState ( );
@@ -52,40 +54,41 @@ public class CardHolder : MonoBehaviour
     public void ClearCard ( Card card, int _, bool isEnemyCard ) 
     {
         if ( !isEnemyCard ) 
-            Cards.Remove ( card );
+            _cards.Remove ( card );
         
         SetHolderState ( );
     }
 
     public void ClearAllCards ( ) 
     {
-        foreach ( Card card in Cards ) 
+        foreach ( Card card in _cards ) 
             Destroy ( card.gameObject );
 
-        Cards.Clear ( );
+        _cards.Clear ( );
         
         SetHolderState ( );
 
         rectTransform.sizeDelta = new Vector2 ( 0, rectTransform.sizeDelta.y );
-        layoutGroup.spacing = 0;
     }
 
     public async void SetCards ( ) 
     {
+        if ( !_cards.Any ( ) ) 
+            return;
+
+        layoutGroup.spacing = 0;
+
         LayoutRebuilder.ForceRebuildLayoutImmediate ( rectTransform );
 
-        var maxHolderWidth = Screen.width - 400;
-        if ( rectTransform.rect.width > maxHolderWidth ) 
-        {
-            var overflowAmount = rectTransform.rect.width - maxHolderWidth;
-            layoutGroup.spacing = -overflowAmount/Cards.Count;
-        }
+        layoutGroup.spacing = -Mathf.Clamp ( rectTransform.rect.width - ( Screen.width - 400 ), 0, Mathf.Infinity ) / _cards.Count;
+        
+        _shouldFadeOverlappingCard = layoutGroup.spacing < -40;
         
         LayoutRebuilder.ForceRebuildLayoutImmediate ( rectTransform );
 
         await Task.Delay ( 100 );
 
-        foreach ( var card in Cards ) 
+        foreach ( var card in _cards ) 
             card.SetCurrentAsBasePosition ( );
     }
 
@@ -93,9 +96,11 @@ public class CardHolder : MonoBehaviour
     {
         _currentlyDraggedCard = clickedCard;
 
-        clickedCard.BeginDrag ( );
+        _currentlyDraggedCard.BeginDrag ( );
 
         HideCards ( );
+        
+        FadeInAllCards ( );
     }
 
     public void StopDraggingCard ( ) 
@@ -108,30 +113,30 @@ public class CardHolder : MonoBehaviour
 
     #region Helpers
 
-    private void HighLightCards ( ) => PlayMovementTween ( _highlightCardsTween, Constants.CardHolderHighlightedPosition, 0.25f );
+    private void HighLightCards ( ) => PlayMovementTween ( ref _highlightCardsTween, Constants.CardHolderHighlightedPosition, 0.25f );
 
-    private void UnHighlightCards ( ) => PlayMovementTween ( _unHighlightCardsTween, Constants.CardHolderUnHighlightedPosition, 0.4f );
+    private void UnHighlightCards ( ) => PlayMovementTween ( ref _unHighlightCardsTween, 
+                    !_cards.Any ( ) ? Constants.CardHolderDisplayPosition : Constants.CardHolderUnHighlightedPosition, 0.4f );
 
-    private void HideCards ( ) => PlayMovementTween ( _hideCardsTween, Constants.CardHolderHiddenPosition, 0.25f );
+    private void HideCards ( ) => PlayMovementTween ( ref _hideCardsTween, Constants.CardHolderHiddenPosition, 0.25f );
 
-    private void PlayMovementTween ( Tweener tween, Vector3 destinationPosition, float travelTimeInSeconds ) 
+    private void PlayMovementTween ( ref Tweener tween, Vector3 destinationPosition, float travelTimeInSeconds ) 
     {
-        if ( tween != null && tween.IsActive ( ) ) 
+        if ( tween.IsActive ( ) ) 
             return;
         
         DestroyTweenIfActive ( _highlightCardsTween );
         DestroyTweenIfActive ( _unHighlightCardsTween );
         DestroyTweenIfActive ( _hideCardsTween );
 
-        tween = rectTransform.DOAnchorPos ( destinationPosition, travelTimeInSeconds )
-            .OnComplete ( ( ) => DestroyTweenIfActive ( tween ) );
+        tween = rectTransform.DOAnchorPos ( destinationPosition, travelTimeInSeconds );
 
         return;
         
 
         static void DestroyTweenIfActive ( Tweener tween ) 
         {
-            if ( tween != null && tween.IsActive ( ) ) 
+            if ( tween.IsActive ( ) ) 
             {
                 tween.Kill ( );
                 tween = null;
@@ -141,10 +146,32 @@ public class CardHolder : MonoBehaviour
 
     private void SetHolderState ( ) 
     {
-        bool isCardHolderEmpty = !Cards.Any ( );
+        bool isCardHolderEmpty = !_cards.Any ( );
 
         indicatorPanel.SetActive ( !isCardHolderEmpty );
         noCardsLeftPanel.SetActive ( isCardHolderEmpty );
+    }
+
+    private void FadeOverlappingCard ( ) 
+    {
+        if ( !_shouldFadeOverlappingCard ) 
+            return;
+        
+        var topmostCard = InputManager.GetTopmostCard ( );
+        var topmostCardIndex = _cards.IndexOf ( topmostCard );
+        
+        if ( topmostCard != null && _cards.IndexOf ( topmostCard ) >= 0 ) 
+            for ( var index = 0; index < _cards.Count; index++ ) 
+                _cards [ index ].FadeToggle ( index == topmostCardIndex + 1 );
+    }
+
+    private void FadeInAllCards ( ) 
+    {
+        if ( !_shouldFadeOverlappingCard ) 
+            return;
+        
+        for ( var index = 0; index < _cards.Count; index++ ) 
+            _cards [ index ].FadeToggle ( fadeOut: false );
     }
 
     #endregion
@@ -152,11 +179,21 @@ public class CardHolder : MonoBehaviour
 
     private void FixedUpdate ( ) 
     {
-        if ( _currentlyDraggedCard == null || _currentlyDraggedCard.IsPlaced )
+        if ( _currentlyDraggedCard == null ) 
+        {
             if ( InputManager.IsMouseOverCards ( ) ) 
+            {
                 HighLightCards ( );
+
+                FadeOverlappingCard ( );
+            }
             else 
+            {
                 UnHighlightCards ( );
+
+                FadeInAllCards ( );
+            }
+        }
     }
 
     #endregion

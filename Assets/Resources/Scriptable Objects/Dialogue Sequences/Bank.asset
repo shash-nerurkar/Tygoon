@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openingDialogues:
   - speaker: 0
-    text: Bhund saab, how are you? I am here to get a loan!
+    text: Bhund saab, how are you? I am here to get a loan! *smiling deviously*
   - speaker: 3
     text: '*sniffs* Where did this stench come from?'
   - speaker: 0
     text: '*snarls at the peon* Stop farting, moron. Go get tea for us.'
   - speaker: 3
-    text: Please do not order the help around. What do you want ?
+    text: Please do not order the help around. What do you want?
   closingDialoguesOnWin:
   - speaker: 0
     text: '*With a teary eye and diminished self respect, gets up from his chair*'

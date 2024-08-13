@@ -5,6 +5,10 @@ public class GameManager : MonoBehaviour
 {
     #region Actions
 
+    public static event Action PlayMainMenuMusicAction;
+
+    public static event Action StopMainMenuMusicAction;
+
     public static event Action<Cutscene> OnCutsceneStartAction;
 
     public static event Action<Level> OnLevelStartAction;
@@ -53,7 +57,12 @@ public class GameManager : MonoBehaviour
 
     private void Start ( ) => StartMainMenu ( fadeInSpeedInSeconds: 0f, fadeOutSpeedInSeconds: 1.5f );
 
-    private void StartNewGame ( ) => StartCutscene ( Cutscene.Pilot );
+    private void StartNewGame ( ) 
+    {
+        StopMainMenuMusicAction?.Invoke ( );
+        
+        StartCutscene ( Cutscene.Pilot );
+    }
     
     private void OnCutsceneSequenceComplete ( ) 
     {
@@ -127,6 +136,8 @@ public class GameManager : MonoBehaviour
 
     private void StartMainMenu ( float fadeInSpeedInSeconds, float fadeOutSpeedInSeconds ) 
     {
+        PlayMainMenuMusicAction?.Invoke ( );
+
         ShowTransitionAction?.Invoke ( fadeInSpeedInSeconds, fadeOutSpeedInSeconds, ( ) => {
             GameStateManager.ChangeGameState ( GameState.MainMenu );
         } );

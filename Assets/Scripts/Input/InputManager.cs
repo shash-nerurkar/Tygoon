@@ -43,6 +43,16 @@ public class InputManager : MonoBehaviour
                 : false;
     }
 
+    public static Card GetTopmostCard ( ) 
+    {
+        PointerEventData pointerEventData = new ( EventSystem.current ) { position = Input.mousePosition };
+
+        List<RaycastResult> raycastResults = new ( );
+        EventSystem.current.RaycastAll ( pointerEventData, raycastResults );
+        
+        return raycastResults.Any ( ) ? raycastResults.First ( ).gameObject.GetComponent<Card> ( ) : null;
+    }
+
     #endregion
 
     
@@ -146,19 +156,6 @@ public class InputManager : MonoBehaviour
 
             currentlyHeldCard = null;
         };
-
-        return;
-
-        
-        static Card GetTopmostCard ( ) 
-        {
-            PointerEventData pointerEventData = new ( EventSystem.current ) { position = Input.mousePosition };
-
-            List<RaycastResult> raycastResults = new ( );
-            EventSystem.current.RaycastAll ( pointerEventData, raycastResults );
-            
-            return raycastResults.Any ( ) ? raycastResults.First ( ).gameObject.GetComponent<Card> ( ) : null;
-        }
     }
 
     #endregion

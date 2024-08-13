@@ -35,6 +35,8 @@ public static class Constants
 
     public static readonly Vector3 CardHolderHighlightedPosition = new ( 0f, 0f );
 
+    public static readonly Vector3 CardHolderDisplayPosition = new ( 0f, -300f );
+
     public static readonly Vector3 CardHolderUnHighlightedPosition = new ( 0f, -525f );
 
     public static readonly Vector3 CardHolderHiddenPosition = new ( 0f, -600f );
@@ -51,13 +53,24 @@ public static class Constants
     #endregion
 
     
-    #region Damage Indicators
+    #region Board Display
 
-    public static readonly Color CardDamagedColor = new ( 1f, 0f, 0f );
+    public static readonly Color CardDamagedColor = new ( 1f, 0.5f, 0f );
 
     public static readonly Color PlayerDamagedColor = new ( 1f, 0f, 0f );
 
     public static readonly Color EnemyDamagedColor = new ( 0f, 1f, 0f );
+
+    #endregion
+    
+
+    #region Progress Bar
+
+    public static readonly Color ProgressBarNegativeColor = new ( 1f, 0f, 0f );
+
+    public static readonly Color ProgressBarPositiveColor = new ( 0f, 1f, 0f );
+
+    public static readonly Color ProgressBarNeutralColor = new ( 1f, 1f, 1f );
 
     #endregion
 }

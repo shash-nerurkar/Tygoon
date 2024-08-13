@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Construction site
   m_EditorClassIdentifier: 
   openingDialogues:
+  - speaker: 0
+    text: What is GOING ON HERE?
   - speaker: 4
     text: HAHAHA! We have gathered the locals to thwart your plans!
   - speaker: 7
@@ -31,7 +33,7 @@ MonoBehaviour:
     text: So the government will improve this area with your new building a part
       of it?
   - speaker: 0
-    text: Yessss, yes of course haha
+    text: Yes, yes of course, haha
   - speaker: 4
     text: NO! He is tricking us all! *enraged*
   - speaker: 8

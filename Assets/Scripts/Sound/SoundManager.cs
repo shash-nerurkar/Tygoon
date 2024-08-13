@@ -20,10 +20,10 @@ public class SoundManager : MonoBehaviour
 
     private void Awake ( ) 
     {
-        GameStateManager.OnGameStateChangeAction += OnGameStateChange;
+        GameManager.PlayMainMenuMusicAction += BeginMainMenuMusic;
+        GameManager.StopMainMenuMusicAction += StopMainMenuMusic;
         
         GameManager.StartBattleAction += BeginFightMusic;
-
         BoardManager.OnPlayerWinAction += StopFightMusic;
         BoardManager.OnPlayerLoseAction += StopFightMusic;
 
@@ -39,10 +39,10 @@ public class SoundManager : MonoBehaviour
 
     private void OnDestroy ( ) 
     {
-        GameStateManager.OnGameStateChangeAction -= OnGameStateChange;
+        GameManager.PlayMainMenuMusicAction -= BeginMainMenuMusic;
+        GameManager.StopMainMenuMusicAction -= StopMainMenuMusic;
         
         GameManager.StartBattleAction -= BeginFightMusic;
-        
         BoardManager.OnPlayerWinAction -= StopFightMusic;
         BoardManager.OnPlayerLoseAction -= StopFightMusic;
     }
@@ -59,26 +59,9 @@ public class SoundManager : MonoBehaviour
     
     #region Music
 
-    private void OnGameStateChange ( GameState state ) 
-    {
-        switch ( state ) 
-        {
-            case GameState.MainMenu:
-                Play ( MusicType.MainMenu );
-                Stop ( MusicType.Fight );
-                break;
+    private void BeginMainMenuMusic ( ) => Play ( MusicType.MainMenu );
 
-            case GameState.Cutscene:
-                Stop ( MusicType.MainMenu );
-                Stop ( MusicType.Fight );
-                break;
-
-            case GameState.InGame:
-                Stop ( MusicType.MainMenu );
-                Stop ( MusicType.Fight );
-                break;
-        }
-    }
+    private void StopMainMenuMusic ( ) => Stop ( MusicType.MainMenu );
 
     private void BeginFightMusic ( Level _ ) => Play ( MusicType.Fight );
 

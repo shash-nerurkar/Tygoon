@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface IEnemy
 {
+    public List<CardData> CardDatas { get; }
+
     public void Init ( CardData [ ] cardDatas );
 
     public void PlayCard ( Card [ ] playerPlacedCards, Card [ ] placedCards, Card [ ] attackingCards, out CardData cardData, out int rowNumber );

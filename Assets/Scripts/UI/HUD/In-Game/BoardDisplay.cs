@@ -61,11 +61,10 @@ public class BoardDisplay : MonoBehaviour
     
     #region Methods
 
-    public void ShowBattleElements ( bool toggleFlags ) 
+    public void ShowBattleElements ( bool show ) 
     {
-        // inGameStatePanelImage.gameObject.SetActive ( toggleFlags );
-        spaceColumns.SetActive ( toggleFlags );
-        indicatorContainerTransform.gameObject.SetActive ( toggleFlags );
+        spaceColumns.SetActive ( show );
+        indicatorContainerTransform.gameObject.SetActive ( show );
     }
 
     public void OnInGameStateChanged ( InGameState state ) 
@@ -97,6 +96,14 @@ public class BoardDisplay : MonoBehaviour
     public void ShowLevelObjective ( Level level ) 
     {
         IndicateInGameState ( levelObjectiveTexts.ToDictionary ( ) [ level ], Constants.NeutralCardColor, scaleFactor: 1.2f, indicationTime: 2f );
+    }
+ 
+    public void ShowNoCardsLeft ( bool isEnemy ) 
+    {
+        if ( isEnemy ) 
+            IndicateInGameState ( "THEY HAVE NO CARDS", Constants.EnemyCardColor, indicationTime: 2f );
+        else 
+            IndicateInGameState ( "YOU HAVE NO CARDS", Constants.PlayerCardColor, indicationTime: 2f );
     }
 
     public void OnLevelStart ( Level level ) 
@@ -172,7 +179,7 @@ public class BoardDisplay : MonoBehaviour
                 {
                     targetCard.transform.DOShakePosition ( 0.3f, strength: new Vector3 ( 10, 10 ), vibrato: 10, randomness: 90 );
 
-                    IndicateDamageDealt ( card.Damage.ToString ( ), spaceToAttack.position, Constants.CardDamagedColor );
+                    IndicateDamageDealt ( $"-{card.Damage}", spaceToAttack.position, 56, Constants.CardDamagedColor );
                 }
                 else 
                 {
@@ -182,6 +189,7 @@ public class BoardDisplay : MonoBehaviour
                     rectTransform.GetWorldCorners ( corners );
                     IndicateDamageDealt ( ( isEnemyCard ? "-" : "+" ) + card.Damage.ToString ( ), 
                                             new Vector3 ( rectTransform.position.x, corners [ 1 ].y + 0.5f ),
+                                            84,
                                             isEnemyCard ? Constants.PlayerDamagedColor : Constants.EnemyDamagedColor );
                 }
 
@@ -246,12 +254,12 @@ public class BoardDisplay : MonoBehaviour
         }
     }
 
-    private void IndicateDamageDealt ( string damage, Vector3 position, Color color ) 
+    private void IndicateDamageDealt ( string damage, Vector3 position, int size, Color color ) 
     {
         var damageIndicatorObject = Instantiate ( damageIndicatorPrefab, position, Quaternion.identity, indicatorContainerTransform );
 
         var damageIndicator = damageIndicatorObject.GetComponent<DamageIndicator> ( );
-        damageIndicator.Initialize ( damage, color );
+        damageIndicator.Initialize ( damage, size, color );
     }
 
     #endregion

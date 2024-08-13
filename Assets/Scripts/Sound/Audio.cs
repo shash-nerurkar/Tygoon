@@ -44,16 +44,14 @@ public abstract class Audio
     {
         Play ( );
 
-        float endVolume = volume;
-        DOTween.To ( ( ) => 0, x => source.volume = x, endVolume, 1.5f )
+        DOTween.To ( ( ) => 0, x => source.volume = x, volume, 1.5f )
             .SetEase ( Ease.InQuad )
             .OnComplete ( ( ) => { } );
     }
 
     public void FadeOutStop ( ) 
     {
-        float startVolume = 0;
-        DOTween.To ( ( ) => startVolume, x => source.volume = x, 0, 1.5f )
+        DOTween.To ( ( ) => volume, x => source.volume = x, 0, 1.5f )
             .SetEase ( Ease.OutQuad )
             .OnComplete ( ( ) => Stop ( ) );
     }

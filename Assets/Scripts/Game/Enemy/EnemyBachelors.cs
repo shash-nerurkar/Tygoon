@@ -8,6 +8,8 @@ public class EnemyBachelors : IEnemy
 
     private List<CardData> _cardDatas;
 
+    public List<CardData> CardDatas => _cardDatas;
+
     #endregion
 
 
@@ -19,7 +21,7 @@ public class EnemyBachelors : IEnemy
     {
         var emptyPlacedRows = IEnemy.GetEmptyRows ( placedCards ).OrderBy ( x => Random.value ).ToList ( );
 
-        if ( !emptyPlacedRows.Any ( ) || !_cardDatas.Any ( ) )
+        if ( !emptyPlacedRows.Any ( ) || !CardDatas.Any ( ) )
         {
             cardData = null;
             rowNumber = -1;
@@ -39,9 +41,9 @@ public class EnemyBachelors : IEnemy
         
         rowNumber = IEnemy.GetRandomRow ( emptyRowsToWeight );
             
-        var cardIndex = Random.Range ( 0, _cardDatas.Count );
-        cardData = _cardDatas [ cardIndex ];
-        _cardDatas.RemoveAt ( cardIndex );
+        var cardIndex = Random.Range ( 0, CardDatas.Count );
+        cardData = CardDatas [ cardIndex ];
+        CardDatas.RemoveAt ( cardIndex );
     }
 
     #endregion

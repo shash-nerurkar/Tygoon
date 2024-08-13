@@ -16,31 +16,22 @@ MonoBehaviour:
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
     text: Surendra Sukarkar is a small-scale landlord. He owns a 2-apartment building
       in the run-down town of Doglapur.
-    transitionSpeedInSeconds: 0
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
     text: SuSu, as he is not-so-lovingly called, is a raging alcoholic. This destructive
       trait has caused him to run out of money. Worried, he is scheming new ways
       to make money.
-    transitionSpeedInSeconds: 0
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
     text: A new mayor of Doglapur has been appointed, and he is liberal with his
       treasury access. The city is developing.
-    transitionSpeedInSeconds: 0
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
-    text: He decides to expand his existing property. But, he needs government approval.
-    transitionSpeedInSeconds: 0
+    text: He decides to expand his existing property.
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
-    text: It will be an expensive affair. He will need a loan.
-    transitionSpeedInSeconds: 0
+    text: First, he'll need government approval.
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
-    text: He will have to kick out his current tenants. There are larger things on
-      the horizon anyways, SuSu thinks.
-    transitionSpeedInSeconds: 0
+    text: Second, it will be an expensive affair. He will need a loan.
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
-    text: There is a pet cemetery beside his building. People will not be pleased
-      to see it go.
-    transitionSpeedInSeconds: 0
+    text: Third, he will have to kick out his current tenants. There are larger things
+      on the horizon anyways.
   - image: {fileID: 21300000, guid: af2da6a27a2242c4ea738b1a3df30797, type: 3}
-    text: Lots of problems. But, gone are the days of earning dimes. SuSu will build
-      his own Tycoon.
-    transitionSpeedInSeconds: 0
+    text: Lots of problems to come. But, gone are the days of earning dimes. SuSu
+      will build his own Tycoon.

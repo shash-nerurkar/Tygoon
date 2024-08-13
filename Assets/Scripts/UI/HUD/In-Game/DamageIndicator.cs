@@ -13,9 +13,10 @@ public class DamageIndicator : MonoBehaviour
 
     #region Methods
 
-    public void Initialize ( string amount, Color textColor ) 
+    public void Initialize ( string amount, int textSize, Color textColor ) 
     {
         label.text = amount;
+        label.fontSize = textSize;
         label.color = textColor;
         
         label.DOColor ( new Color ( label.color.r, label.color.g, label.color.b, 0 ), 1f ) 

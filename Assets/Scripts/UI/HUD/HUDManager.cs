@@ -4,13 +4,6 @@ using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
-    #region Actions
-
-    public static event Action OnRestartPressedAction;
-
-    #endregion
-
-    
     #region Serialized Fields
 
     [ SerializeField ] private Transition transition;
@@ -52,6 +45,7 @@ public class HUDManager : MonoBehaviour
         Card.PlacementValidityCheckAction += boardDisplay.CheckCardPlacementValidity;
         BoardManager.InitializeBoardAction += boardDisplay.OnLevelStart;
         BoardManager.ShowLevelObjectiveAction += boardDisplay.ShowLevelObjective;
+        BoardManager.ShowNoCardsLeftAction += boardDisplay.ShowNoCardsLeft;
         BoardManager.CardSpawnAction += boardDisplay.CardSpawn;
         BoardManager.CardMoveAction += boardDisplay.CardMove;
         BoardManager.CardAttackAction += boardDisplay.CardAttack;
@@ -90,6 +84,7 @@ public class HUDManager : MonoBehaviour
         Card.PlacementValidityCheckAction -= boardDisplay.CheckCardPlacementValidity;
         BoardManager.InitializeBoardAction -= boardDisplay.OnLevelStart;
         BoardManager.ShowLevelObjectiveAction -= boardDisplay.ShowLevelObjective;
+        BoardManager.ShowNoCardsLeftAction -= boardDisplay.ShowNoCardsLeft;
         BoardManager.CardSpawnAction -= boardDisplay.CardSpawn;
         BoardManager.CardMoveAction -= boardDisplay.CardMove;
         BoardManager.CardAttackAction -= boardDisplay.CardAttack;
@@ -212,8 +207,6 @@ public class HUDManager : MonoBehaviour
                 break;
         }
     }
-
-    public void OnRestartPressed ( ) => OnRestartPressedAction?.Invoke ( );
 
     #endregion
 }

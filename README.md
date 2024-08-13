@@ -33,9 +33,6 @@
   
   <p align='justify'></p>
   <img src='Assets/Documentation/Screenshot-4.png' alt="gameplay_4" width='auto' height='70%'/>
-
-
-  <br />
   
   
   <h1> Prerequisites </h1>

@@ -43,10 +43,10 @@ public class CutsceneDisplay : MonoBehaviour
         }
     }
 
-    public void ShowNextSegment ( ) 
+    public bool ShowNextSegment ( ) 
     {
         if ( _currentSequenceData == null ) 
-            return;
+            return false;
 
         if ( _currentSegmentIndex < _currentSequenceData.Segments.Count - 1 ) 
         {
@@ -59,6 +59,8 @@ public class CutsceneDisplay : MonoBehaviour
             _currentSegmentIndex = -1;
             OnSequenceCompleteAction?.Invoke ( );
         }
+
+        return true;
     }
 
     private async void ShowCurrentSegment ( ) 

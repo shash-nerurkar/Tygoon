@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Flash documents
   damage: 3
-  health: 4
+  health: 3
   description: Show off your hard earned govt and bank approvals.

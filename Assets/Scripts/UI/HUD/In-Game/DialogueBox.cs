@@ -57,10 +57,10 @@ public class DialogueBox : MonoBehaviour
         }
     }
 
-    public void ShowNextDialogue ( ) 
+    public bool ShowNextDialogue ( ) 
     {
         if ( _currentDialoguesData == null ) 
-            return;
+            return false;
 
         if ( _currentDialogueIndex < _currentDialoguesData.Count - 1 ) 
         {
@@ -74,6 +74,8 @@ public class DialogueBox : MonoBehaviour
             ClearDialogueBox ( );
             OnSequenceCompleteAction?.Invoke ( _isOpeningSequence );
         }
+
+        return true;
     }
 
     private void ShowCurrentDialogue ( ) 

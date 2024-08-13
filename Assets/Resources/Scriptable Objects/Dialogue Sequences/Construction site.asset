@@ -38,7 +38,7 @@ MonoBehaviour:
     text: NO! He is tricking us all! *enraged*
   - speaker: 8
     text: You promise to take care of this place? This is my home.
-  - speaker: 8
+  - speaker: 0
     text: I promise... *Devilish grin*
   - speaker: 5
     text: HE IS LYING!! WHY ARE YOU LISTENING TO HIM? *teary*

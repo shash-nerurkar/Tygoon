@@ -190,19 +190,22 @@ public class HUDManager : MonoBehaviour
 
     private void GoNextPressed ( ) 
     {
+        bool didPopAnything;
         switch ( GameStateManager.CurrentGameState ) 
         {
             case GameState.Cutscene:
-                SoundManager.Instance.Play ( SoundType.OnCutscenePopped );
+                didPopAnything = cutsceneDisplay.ShowNextSegment ( );
 
-                cutsceneDisplay.ShowNextSegment ( );
+                if ( didPopAnything ) 
+                    SoundManager.Instance.Play ( SoundType.OnCutscenePopped );
 
                 break;
 
             case GameState.InGame:
-                SoundManager.Instance.Play ( SoundType.OnDialoguePopped );
+                didPopAnything = dialogueBox.ShowNextDialogue ( );
 
-                dialogueBox.ShowNextDialogue ( );
+                if ( didPopAnything ) 
+                    SoundManager.Instance.Play ( SoundType.OnDialoguePopped );
 
                 break;
         }
